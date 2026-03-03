@@ -17,7 +17,11 @@
 	"observability": {
 		"enabled": true
 	},
-	"upload_source_maps": true
+	"upload_source_maps": true,
+	"routes": [
+		{ "pattern": "nischoy.ai", "custom_domain": true },
+		{ "pattern": "www.nischoy.ai", "custom_domain": true }
+	]
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
