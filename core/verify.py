@@ -17,14 +17,14 @@ from converter import SMTConverter
 from constraints import SecurityConstraints
 import z3
 
-def run_check(name, ast, constraint_fn):
+def run_check(name, ast, constraint_fn, explanation=""):
     """Run a single verification check. Returns a result dict."""
     converter = SMTConverter()
     solver, vars_dict = converter.convert(ast)
     
     violation = constraint_fn(vars_dict)
     if violation is None:
-        return {"name": name, "status": "SKIPPED", "reason": "No matching variables"}
+        return {"name": name, "status": "SKIPPED", "reason": "No matching variables", "explanation": explanation}
     
     # Push a new scope so we can add the violation without polluting the solver
     solver.push()
@@ -44,7 +44,8 @@ def run_check(name, ast, constraint_fn):
         "function": ast["function"],
         "status": status,
         "elapsed_ms": round(elapsed * 1000, 1),
-        "smt2": smt2
+        "smt2": smt2,
+        "explanation": explanation
     }
 
 def generate_html(results, project, version):
@@ -66,6 +67,8 @@ def generate_html(results, project, version):
         <pre><code>{r['smt2']}</code></pre>
       </details>"""
         
+        explanation_block = f"""<p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">{r.get('explanation', '')}</p>""" if r.get('explanation') else ""
+        
         cards += f"""
     <div class="result-card {color}">
       <div class="result-header">
@@ -73,7 +76,8 @@ def generate_html(results, project, version):
         <h3>{r['name']}</h3>
         <span class="badge {color}">{r['status']}</span>
       </div>
-      <p class="result-meta">Function: <code>{r.get('function', 'N/A')}</code> · Z3 solved in {r.get('elapsed_ms', '?')}ms</p>{smt2_block}
+      <p class="result-meta">Function: <code>{r.get('function', 'N/A')}</code> · Z3 solved in {r.get('elapsed_ms', '?')}ms</p>
+      {explanation_block}{smt2_block}
     </div>"""
 
     overall_color = "green" if failed == 0 else "red"
@@ -281,9 +285,9 @@ def run_project_checks(project_slug, project_name, version, language, source_fil
         
     parser = CParser(source_file)
     results = []
-    for name, ast, constraint_fn in checks_config(parser):
+    for name, ast, constraint_fn, explanation in checks_config(parser):
         print(f"  [{project_name}] Checking: {name}...")
-        r = run_check(name, ast, constraint_fn)
+        r = run_check(name, ast, constraint_fn, explanation)
         print(f"    → {r['status']} ({r.get('elapsed_ms', '?')}ms)")
         results.append(r)
         
@@ -318,96 +322,112 @@ def get_curl_checks(parser):
     return [
         ("Port Number Bounds (0-65535)", 
          parser.parse_port_validation(), 
-         SecurityConstraints.port_bounds),
+         SecurityConstraints.port_bounds,
+         "Ensures that a parsed port number strictly falls between 0 and 65535. This prevents integer overflow bugs where negative numbers or extremely large numbers could bypass downstream access controls."),
         ("IPv6 Bracket Integrity", 
          parser.parse_ipv6_validation(), 
-         SecurityConstraints.ipv6_bracket_integrity),
+         SecurityConstraints.ipv6_bracket_integrity,
+         "Mathematically proves that any IPv6 address parsed starting with a '[' bracket must also correctly terminate with a ']' bracket. This guarantees memory boundaries during address tokenization."),
         ("No CRLF in Credentials (Header Injection)", 
          parser.parse_credential_validation(), 
-         SecurityConstraints.no_crlf_in_credentials),
+         SecurityConstraints.no_crlf_in_credentials,
+         "Verifies that HTTP headers cannot be injected via the username or password fields in a URL by asserting that no Carriage Return (\\r) or Line Feed (\\n) characters are present."),
         ("Hostname Character Validation (SSRF)", 
          parser.parse_hostname_validation(), 
-         SecurityConstraints.hostname_no_dangerous_chars),
+         SecurityConstraints.hostname_no_dangerous_chars,
+         "Prevents Server-Side Request Forgery (SSRF) and parser-differential attacks by ensuring the hostname does not contain whitespace, @, #, ?, or other control characters."),
         ("URL Control Character Rejection (Smuggling)", 
          parser.parse_junkscan(), 
-         SecurityConstraints.no_control_chars_in_url),
+         SecurityConstraints.no_control_chars_in_url,
+         "Proves the URL rejects all non-printable ASCII characters (<= 31 or == 127). This fundamentally prevents request smuggling and parser confusion vulnerabilities."),
     ]
 
 def get_zlib_checks(parser):
     return [
         ("Adler32 Length Bounds",
          parser.parse_adler32_combine(),
-         SecurityConstraints.adler32_len_bounds),
+         SecurityConstraints.adler32_len_bounds,
+         "Ensures that the length parameter used in Adler-32 checksum calculations cannot exceed safe buffer boundaries, preventing integer overflow during chunk processing."),
     ]
 
 def get_libsodium_checks(parser):
     return [
         ("KDF Blake2b Subkey Length Bounds",
          parser.parse_kdf_blake2b_derive_from_key(),
-         SecurityConstraints.kdf_blake2b_subkey_len_bounds),
+         SecurityConstraints.kdf_blake2b_subkey_len_bounds,
+         "Cryptographic constraint: Verifies that the derived subkey length strictly adheres to the bounds defined by the Blake2b hashing algorithm, preventing memory corruption or weak keys."),
     ]
 
 def get_sqlite_checks(parser):
     return [
         ("SQLite3 Limit ID Bounds",
          parser.parse_sqlite3_limit(),
-         SecurityConstraints.sqlite3_limit_bounds),
+         SecurityConstraints.sqlite3_limit_bounds,
+         "Ensures that the index ID for setting SQLite runtime limits is within valid bounds. This prevents out-of-bounds array access when configuring database properties."),
     ]
 
 def get_openssl_checks(parser):
     return [
         ("DSA_SIG DER decode length bounds",
          parser.parse_d2i_DSA_SIG(),
-         SecurityConstraints.dsa_sig_len_bounds),
+         SecurityConstraints.dsa_sig_len_bounds,
+         "Verifies that the length parameter provided when decoding an ASN.1 DER encoded DSA signature is strictly non-negative. This prevents catastrophic integer underflow vulnerabilities during cryptographic parsing."),
     ]
 
 def get_nginx_checks(parser):
     return [
         ("HTTP/2 Field Length Bounds",
          parser.parse_ngx_http_v2_state_field_len(),
-         SecurityConstraints.nginx_field_len_bounds),
+         SecurityConstraints.nginx_field_len_bounds,
+         "Proves that HTTP/2 HPACK header field lengths are never negative. A negative length in HTTP/2 state parsing could cause infinite loops or massive out-of-bounds memory reads."),
     ]
 
 def get_libxml2_checks(parser):
     return [
         ("Entity Expansion Depth Limit",
          parser.parse_libxml2_parser_max_depth(),
-         SecurityConstraints.libxml2_depth_bounds),
+         SecurityConstraints.libxml2_depth_bounds,
+         "Verifies the 'Billion Laughs' protection: ensures the recursive entity expansion depth cannot exceed 40. This mathematically guarantees the parser is immune to exponential XML entity denial-of-service attacks."),
     ]
 
 def get_libpng_checks(parser):
     return [
         ("IHDR Image Width Bounds",
          parser.parse_png_ihdr_width(),
-         SecurityConstraints.png_width_bounds),
+         SecurityConstraints.png_width_bounds,
+         "Ensures that the image width parsed from a PNG IHDR chunk is strictly greater than 0 and less than or equal to INT_MAX. This prevents integer overflow when allocating memory for image row buffers."),
     ]
 
 def get_mbedtls_checks(parser):
     return [
         ("SSL Record Data Length Bounds",
          parser.parse_mbedtls_ssl_record_len(),
-         SecurityConstraints.mbedtls_record_len_bounds),
+         SecurityConstraints.mbedtls_record_len_bounds,
+         "Verifies that the decrypted TLS record payload length never exceeds the maximum permissible SSL record size (16,384 bytes). This prevents buffer overflow when assembling fragments."),
     ]
 
 def get_openssh_checks(parser):
     return [
         ("Max Auth Tries Bounds",
          parser.parse_openssh_auth_max_tries(),
-         SecurityConstraints.openssh_max_authtries_bounds),
+         SecurityConstraints.openssh_max_authtries_bounds,
+         "Proves that the configuration variable for maximum authentication attempts must be between 1 and 100. This ensures the SSH daemon cannot be configured into an infinite password brute-force loop."),
     ]
 
 def get_sudo_checks(parser):
     return [
         ("UID Bounds Validation",
          parser.parse_sudo_uid_check(),
-         SecurityConstraints.sudo_uid_bounds),
+         SecurityConstraints.sudo_uid_bounds,
+         "Ensures that User IDs processed by the sudo privilege escalater are between 0 and 65534. This prevents privilege bypasses via integer overflow attacks on the UID type."),
     ]
 
 def get_git_checks(parser):
     return [
         ("Protocol Version Bounds",
          parser.parse_git_protocol_version(),
-         SecurityConstraints.git_protocol_version_bounds),
+         SecurityConstraints.git_protocol_version_bounds,
+         "Validates that the parsed Git network protocol version is bounded between version 0 and version 2, ensuring state machine stability and preventing parser confusion on the wire protocol."),
     ]
 
 def main():

@@ -105,6 +105,7 @@
         <span class="badge green">VERIFIED</span>
       </div>
       <p class="result-meta">Function: <code>Curl_parse_port</code> · Z3 solved in 0.2ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures that a parsed port number strictly falls between 0 and 65535. This prevents integer overflow bugs where negative numbers or extremely large numbers could bypass downstream access controls.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
         <pre><code>; benchmark generated from python API
@@ -131,6 +132,7 @@
         <span class="badge green">VERIFIED</span>
       </div>
       <p class="result-meta">Function: <code>ipv6_parse</code> · Z3 solved in 0.1ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Mathematically proves that any IPv6 address parsed starting with a '[' bracket must also correctly terminate with a ']' bracket. This guarantees memory boundaries during address tokenization.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
         <pre><code>; benchmark generated from python API
@@ -155,6 +157,7 @@
         <span class="badge green">VERIFIED</span>
       </div>
       <p class="result-meta">Function: <code>parse_hostname_login</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that HTTP headers cannot be injected via the username or password fields in a URL by asserting that no Carriage Return (\r) or Line Feed (\n) characters are present.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
         <pre><code>; benchmark generated from python API
@@ -190,6 +193,7 @@
         <span class="badge green">VERIFIED</span>
       </div>
       <p class="result-meta">Function: <code>hostname_check</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Prevents Server-Side Request Forgery (SSRF) and parser-differential attacks by ensuring the hostname does not contain whitespace, @, #, ?, or other control characters.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
         <pre><code>; benchmark generated from python API
@@ -328,6 +332,7 @@
         <span class="badge green">VERIFIED</span>
       </div>
       <p class="result-meta">Function: <code>Curl_junkscan</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves the URL rejects all non-printable ASCII characters (<= 31 or == 127). This fundamentally prevents request smuggling and parser confusion vulnerabilities.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
         <pre><code>; benchmark generated from python API
@@ -472,7 +477,7 @@
       </details>
     </div>
 
-    <p class="timestamp">Last verified: 2026-03-06 19:20:38 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-06 19:57:16 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

@@ -105,6 +105,7 @@
         <span class="badge green">VERIFIED</span>
       </div>
       <p class="result-meta">Function: <code>auth_maxtries_exceeded</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that the configuration variable for maximum authentication attempts must be between 1 and 100. This ensures the SSH daemon cannot be configured into an infinite password brute-force loop.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
         <pre><code>; benchmark generated from python API
@@ -121,7 +122,7 @@
       </details>
     </div>
 
-    <p class="timestamp">Last verified: 2026-03-06 19:20:38 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-06 19:57:16 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>
