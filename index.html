@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nischoy — Formal Verification for Open Source Security</title>
+  <meta name="description" content="Mathematical proof of open source security. We formally verify the code your software depends on using SMT2 constraints.">
+  <meta property="og:title" content="Nischoy — Formal Verification for Open Source Security">
+  <meta property="og:description" content="Mathematical proof of open source security. Not heuristics. Not pattern matching. Proof.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --bg-card: #111827;
+      --bg-card-hover: #1a2332;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #22d3ee;
+      --accent-glow: rgba(34, 211, 238, 0.15);
+      --green: #22c55e;
+      --red: #ef4444;
+      --border: #1e293b;
+      --gradient-1: #06b6d4;
+      --gradient-2: #8b5cf6;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Nav */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(10, 14, 23, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .logo {
+      font-size: 1.5rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    nav a {
+      color: var(--text-muted); text-decoration: none; margin-left: 2rem;
+      font-size: 0.9rem; transition: color 0.2s;
+    }
+    nav a:hover { color: var(--accent); }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      background: rgba(34, 211, 238, 0.05);
+    }
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      max-width: 800px;
+    }
+    h1 span {
+      background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+    .cta-group { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+      color: white;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Sections */
+    section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+
+    /* Dashboard Preview */
+    .dashboard {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 3rem auto;
+      max-width: 800px;
+    }
+    .dashboard-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.85rem; color: var(--text-muted);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #eab308; }
+    .dot-green { background: #22c55e; }
+    .dashboard-body { padding: 0; }
+    .dash-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .dash-row:last-child { border-bottom: none; }
+    .dash-row:hover { background: var(--bg-card-hover); }
+    .dash-pkg { display: flex; align-items: center; gap: 0.75rem; }
+    .dash-pkg-name { font-weight: 600; font-size: 0.95rem; }
+    .dash-pkg-ver { color: var(--text-muted); font-size: 0.8rem; }
+    .dash-status {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .status-pass { color: var(--green); }
+    .status-fail { color: var(--red); }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .status-dot.pass { background: var(--green); box-shadow: 0 0 8px rgba(34, 197, 94, 0.5); }
+    .status-dot.fail { background: var(--red); box-shadow: 0 0 8px rgba(239, 68, 68, 0.5); }
+    .dash-constraints { color: var(--text-muted); font-size: 0.8rem; min-width: 100px; text-align: right; }
+
+    /* How it works */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+    }
+    .step {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .step:hover { border-color: var(--accent); }
+    .step-num {
+      font-size: 3rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      opacity: 0.3;
+      position: absolute; top: 1rem; right: 1.5rem;
+    }
+    .step h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .step p { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* Differentiator */
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .diff-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+    .diff-card h3 { margin-bottom: 0.5rem; font-size: 1rem; }
+    .diff-card p { color: var(--text-muted); font-size: 0.9rem; }
+    .diff-card.highlight {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(139, 92, 246, 0.05));
+    }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+    .price-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .price-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .price-card.featured {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(139, 92, 246, 0.08));
+    }
+    .price-tier {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .price-amount {
+      font-size: 2rem; font-weight: 800;
+      margin-bottom: 0.25rem;
+    }
+    .price-period { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1.5rem; }
+    .price-features {
+      list-style: none; text-align: left;
+      font-size: 0.85rem; color: var(--text-muted);
+    }
+    .price-features li {
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .price-features li:last-child { border: none; }
+    .price-features li::before {
+      content: '✓ ';
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    /* Founder */
+    .founder {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 3rem;
+      margin-top: 2rem;
+    }
+    .founder-info h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .founder-info p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem; }
+    .founder-creds {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .cred {
+      padding: 0.3rem 0.75rem;
+      background: rgba(34, 211, 238, 0.08);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+
+    /* CTA */
+    .final-cta {
+      text-align: center;
+      padding: 6rem 2rem;
+      position: relative;
+    }
+    .final-cta::before {
+      content: '';
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .final-cta h2 { margin-bottom: 1rem; }
+    .final-cta p { color: var(--text-muted); margin-bottom: 2rem; max-width: 500px; margin-inline: auto; }
+
+    /* Email form */
+    .email-form {
+      display: flex; gap: 0.5rem; justify-content: center; max-width: 450px; margin: 0 auto;
+    }
+    .email-form input {
+      flex: 1;
+      padding: 0.85rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .email-form input:focus { border-color: var(--accent); }
+    .email-form input::placeholder { color: var(--text-muted); }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .diff-grid { grid-template-columns: 1fr; }
+      .founder { flex-direction: column; text-align: center; }
+      .founder-creds { justify-content: center; }
+      nav a { display: none; }
+      .email-form { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">nischoy</div>
+  <div>
+    <a href="#how">How It Works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#founder">About</a>
+    <a href="#notify">Get Notified</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="badge">🔬 Powered by SMT2 Formal Verification</div>
+  <h1>
+    <span>Mathematical Proof</span><br>
+    of Open Source Security
+  </h1>
+  <p class="subtitle">
+    We formally verify the code your software depends on.
+    Not heuristics. Not pattern matching. <strong>Proof.</strong>
+  </p>
+  <div class="cta-group">
+    <a href="#notify" class="btn btn-primary">Get Notified at Launch</a>
+    <a href="#how" class="btn btn-secondary">See How It Works →</a>
+  </div>
+
+  <!-- Dashboard Preview -->
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <span class="dot dot-red"></span>
+      <span class="dot dot-yellow"></span>
+      <span class="dot dot-green"></span>
+      <span style="margin-left: 0.5rem;">nischoy.ai/dashboard — Live Verification Status</span>
+    </div>
+    <div class="dashboard-body">
+      <div class="dash-row">
+        <div class="dash-pkg">
+          <div>
+            <div class="dash-pkg-name">openssl</div>
+            <div class="dash-pkg-ver">v3.3.2 · C</div>
+          </div>
+        </div>
+        <div class="dash-constraints">14 constraints</div>
+        <div class="dash-status status-pass">
+          <span class="status-dot pass"></span> VERIFIED
+        </div>
+      </div>
+      <div class="dash-row">
+        <div class="dash-pkg">
+          <div>
+            <div class="dash-pkg-name">libsodium</div>
+            <div class="dash-pkg-ver">v1.0.20 · C</div>
+          </div>
+        </div>
+        <div class="dash-constraints">11 constraints</div>
+        <div class="dash-status status-pass">
+          <span class="status-dot pass"></span> VERIFIED
+        </div>
+      </div>
+      <div class="dash-row">
+        <div class="dash-pkg">
+          <div>
+            <div class="dash-pkg-name">curl</div>
+            <div class="dash-pkg-ver">v8.11.1 · C</div>
+          </div>
+        </div>
+        <div class="dash-constraints">9 constraints</div>
+        <div class="dash-status status-fail">
+          <span class="status-dot fail"></span> FAILED
+        </div>
+      </div>
+      <div class="dash-row">
+        <div class="dash-pkg">
+          <div>
+            <div class="dash-pkg-name">zlib</div>
+            <div class="dash-pkg-ver">v1.3.1 · C</div>
+          </div>
+        </div>
+        <div class="dash-constraints">7 constraints</div>
+        <div class="dash-status status-pass">
+          <span class="status-dot pass"></span> VERIFIED
+        </div>
+      </div>
+      <div class="dash-row">
+        <div class="dash-pkg">
+          <div>
+            <div class="dash-pkg-name">mbedtls</div>
+            <div class="dash-pkg-ver">v3.6.2 · C</div>
+          </div>
+        </div>
+        <div class="dash-constraints">12 constraints</div>
+        <div class="dash-status status-pass">
+          <span class="status-dot pass"></span> VERIFIED
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- How It Works -->
+<section id="how">
+  <div class="section-label">How It Works</div>
+  <h2>From source code to mathematical proof</h2>
+  <p class="section-sub">Four steps. Zero guesswork. Complete isolation from the code being verified.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Parse</h3>
+      <p>We parse security-critical code paths from open source projects — auth, crypto, memory handling, input validation.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Translate</h3>
+      <p>Code is translated to SMT2 — a formal language that SMT solvers like Z3 can reason about mathematically.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Verify</h3>
+      <p>We run security constraints against the translated code. Buffer overflows, integer bugs, auth bypasses — proven or disproven.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <h3>Publish</h3>
+      <p>Results appear on the public dashboard. Green means verified. Red means a constraint was violated. No ambiguity.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Why Different -->
+<section>
+  <div class="section-label">Why Nischoy</div>
+  <h2>Not another scanning tool</h2>
+  <p class="section-sub">SCA tools find known CVEs. We prove properties that haven't been exploited yet.</p>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <h3>🔍 Traditional SCA Tools</h3>
+      <p>Match against databases of known vulnerabilities. Reactive — only catches what's been found before. Can't detect novel logic flaws or zero-days.</p>
+    </div>
+    <div class="diff-card highlight">
+      <h3>🛡️ Nischoy (Formal Verification)</h3>
+      <p>Mathematically proves security properties hold. Proactive — catches bugs before they're exploited. Finds what scanners structurally cannot.</p>
+    </div>
+    <div class="diff-card highlight">
+      <h3>🔐 Isolated Constraint Repository</h3>
+      <p>Our parser and constraints live in a completely separate repository. A compromised OSS project cannot tamper with its own verification. Supply chain immune.</p>
+    </div>
+    <div class="diff-card">
+      <h3>⚡ Targeted Verification</h3>
+      <p>We don't verify entire codebases. We target security-critical paths — auth, crypto, memory, parsing — where bugs actually cause breaches.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+  <div class="section-label">Pricing</div>
+  <h2>From free dashboard to enterprise</h2>
+  <p class="section-sub">Start with the public list. Scale to custom verification for your own code.</p>
+
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Open Source</div>
+      <div class="price-amount">Free</div>
+      <div class="price-period">forever</div>
+      <ul class="price-features">
+        <li>Public red/green dashboard</li>
+        <li>Top OSS packages</li>
+        <li>GitHub Action badge</li>
+        <li>Community access</li>
+      </ul>
+    </div>
+    <div class="price-card featured">
+      <div class="price-tier">API</div>
+      <div class="price-amount">$99<span style="font-size:1rem">/mo</span></div>
+      <div class="price-period">starting at</div>
+      <ul class="price-features">
+        <li>CI/CD integration</li>
+        <li>Block red dependencies</li>
+        <li>Webhook alerts</li>
+        <li>Team dashboard</li>
+      </ul>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Constraints</div>
+      <div class="price-amount">$499<span style="font-size:1rem">/mo</span></div>
+      <div class="price-period">starting at</div>
+      <ul class="price-features">
+        <li>Read SMT2 constraint code</li>
+        <li>Audit the proofs</li>
+        <li>Custom property checks</li>
+        <li>Priority support</li>
+      </ul>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Enterprise</div>
+      <div class="price-amount">Custom</div>
+      <div class="price-period">let's talk</div>
+      <ul class="price-features">
+        <li>Closed-source verification</li>
+        <li>Bespoke constraints</li>
+        <li>Dedicated solver compute</li>
+        <li>Compliance-ready reports</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Founder -->
+<section id="founder">
+  <div class="section-label">Built By</div>
+  <h2>Deep expertise. Not a weekend project.</h2>
+
+  <div class="founder">
+    <div class="founder-info">
+      <h3>Soumik Sarkar</h3>
+      <p>
+        Principal Security Architect building AI governance at enterprise scale. 
+        Co-founded CodeLogic (CTO, 40 engineers). Directed security at Glint (→ LinkedIn). 
+        Led Common Criteria certification at Citrix, unlocking $10M in federal sales. 
+        Full-stack security experience from BIOS firmware to AI agents.
+      </p>
+      <div class="founder-creds">
+        <span class="cred">3 US Patents</span>
+        <span class="cred">CISSP</span>
+        <span class="cred">CSSLP</span>
+        <span class="cred">Stanford AI Security</span>
+        <span class="cred">Formal Methods</span>
+        <span class="cred">SMT2 / Z3</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<div class="final-cta" id="notify">
+  <h2>Launching Soon</h2>
+  <p>Be the first to see the dashboard and get API access. We're starting with C/C++ crypto and auth libraries.</p>
+  <div class="email-form">
+    <input type="email" placeholder="you@company.com" id="email-input">
+    <button class="btn btn-primary" onclick="alert('Thanks! We\'ll be in touch at launch.')">Notify Me</button>
+  </div>
+  <p style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted);">No spam. Just a launch notification.</p>
+</div>
+
+<footer>
+  <p>© 2026 Nischoy · <a href="mailto:hello@nischoy.ai" style="color: var(--accent); text-decoration: none;">hello@nischoy.ai</a></p>
+</footer>
+
+</body>
+</html>
