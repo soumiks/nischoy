@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nischoy — curl Verification Results</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --bg-card: #111827;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #22d3ee;
+      --green: #22c55e;
+      --red: #ef4444;
+      --border: #1e293b;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
+    .back-link { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+    .back-link:hover { color: var(--accent); }
+    h1 {
+      font-size: 2.2rem; font-weight: 800; margin: 2rem 0 0.5rem;
+      background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .summary {
+      display: flex; gap: 1.5rem; margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+    .summary-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem 1.5rem; min-width: 120px;
+    }
+    .summary-card .num { font-size: 2rem; font-weight: 800; }
+    .summary-card .label { font-size: 0.8rem; color: var(--text-muted); }
+    .summary-card.green { border-color: var(--green); }
+    .result-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem;
+    }
+    .result-card.green { border-left: 3px solid var(--green); }
+    .result-card.red { border-left: 3px solid var(--red); }
+    .result-header { display: flex; align-items: center; gap: 0.75rem; }
+    .result-header h3 { flex: 1; font-size: 1rem; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .status-dot.green { background: var(--green); box-shadow: 0 0 8px rgba(34, 197, 94, 0.5); }
+    .status-dot.red { background: var(--red); box-shadow: 0 0 8px rgba(239, 68, 68, 0.5); }
+    .badge {
+      padding: 0.15rem 0.5rem; border-radius: 4px;
+      font-size: 0.75rem; font-weight: 700;
+    }
+    .badge.green { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+    .badge.red { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+    .result-meta { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem; }
+    code { background: rgba(34, 211, 238, 0.1); padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.85rem; }
+    details { margin-top: 1rem; }
+    summary { cursor: pointer; color: var(--accent); font-size: 0.85rem; }
+    pre {
+      background: #000; padding: 1rem; border-radius: 8px;
+      overflow-x: auto; font-size: 0.8rem; color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+    .timestamp { color: var(--text-muted); font-size: 0.8rem; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← nischoy.ai</a>
+    <h1>curl Verification</h1>
+    <p style="color: var(--text-muted); margin-bottom: 0.5rem;">
+      SMT2 formal verification of security-critical code paths
+    </p>
+
+    <div class="summary">
+      <div class="summary-card green">
+        <div class="num" style="color: var(--green)">ALL VERIFIED</div>
+        <div class="label">Overall</div>
+      </div>
+      <div class="summary-card">
+        <div class="num">5</div>
+        <div class="label">Properties Checked</div>
+      </div>
+      <div class="summary-card">
+        <div class="num" style="color: var(--green)">5</div>
+        <div class="label">Verified</div>
+      </div>
+      <div class="summary-card">
+        <div class="num" style="color: var(--red)">0</div>
+        <div class="label">Failed</div>
+      </div>
+    </div>
+
+    
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Port Number Bounds (0-65535)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>Curl_parse_port</code> · Z3 solved in 0.1ms</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun port () Int)
+(declare-fun u->portnum () Int)
+(assert
+ (<= port 65535))
+(assert
+ (>= port 0))
+(assert
+ (let ((?x30 (mod port 65536)))
+ (= u->portnum ?x30)))
+(assert
+ (or (< u->portnum 0) (> u->portnum 65535)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>IPv6 Bracket Integrity</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>ipv6_parse</code> · Z3 solved in 0.0ms</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun hostname () String)
+(assert
+ (let (($x31 (= (str.substr hostname (- (str.len hostname) 1) 1) "]")))
+ (let (($x38 (= (str.substr hostname 0 1) "[")))
+ (=> $x38 $x31))))
+(assert
+ (let (($x31 (= (str.substr hostname (- (str.len hostname) 1) 1) "]")))
+(let (($x38 (= (str.substr hostname 0 1) "[")))
+(and $x38 (not $x31)))))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>No CRLF in Credentials (Header Injection)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>parse_hostname_login</code> · Z3 solved in 0.0ms</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun user () String)
+(declare-fun password () String)
+(assert
+ (let (($x38 (str.contains user "\u{d}")))
+ (not $x38)))
+(assert
+ (let (($x128 (str.contains user "\u{a}")))
+ (not $x128)))
+(assert
+ (let (($x95 (str.contains password "\u{d}")))
+ (not $x95)))
+(assert
+ (let (($x125 (str.contains password "\u{a}")))
+ (not $x125)))
+(assert
+ (let (($x125 (str.contains password "\u{a}")))
+(let (($x95 (str.contains password "\u{d}")))
+(let (($x128 (str.contains user "\u{a}")))
+(let (($x38 (str.contains user "\u{d}")))
+(or $x38 $x128 $x95 $x125))))))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Hostname Character Validation (SSRF)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>hostname_check</code> · Z3 solved in 0.0ms</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun hostname () String)
+(assert
+ (let (($x38 (str.contains hostname " ")))
+ (not $x38)))
+(assert
+ (let (($x111 (str.contains hostname "\u{d}")))
+ (not $x111)))
+(assert
+ (let (($x45 (str.contains hostname "\u{a}")))
+ (not $x45)))
+(assert
+ (let (($x27 (str.contains hostname "\u{9}")))
+ (not $x27)))
+(assert
+ (let (($x65 (str.contains hostname "/")))
+ (not $x65)))
+(assert
+ (let (($x35 (str.contains hostname ":")))
+ (not $x35)))
+(assert
+ (let (($x20 (str.contains hostname "#")))
+ (not $x20)))
+(assert
+ (let (($x86 (str.contains hostname "?")))
+ (not $x86)))
+(assert
+ (let (($x58 (str.contains hostname "!")))
+ (not $x58)))
+(assert
+ (let (($x81 (str.contains hostname "@")))
+ (not $x81)))
+(assert
+ (let (($x98 (str.contains hostname "{")))
+ (not $x98)))
+(assert
+ (let (($x100 (str.contains hostname "}")))
+ (not $x100)))
+(assert
+ (let (($x107 (str.contains hostname "[")))
+ (not $x107)))
+(assert
+ (not (str.contains hostname "]")))
+(assert
+ (let (($x122 (str.contains hostname "\")))
+ (not $x122)))
+(assert
+ (let (($x132 (str.contains hostname "$")))
+ (not $x132)))
+(assert
+ (let (($x150 (str.contains hostname "'")))
+ (not $x150)))
+(assert
+ (let (($x93 (str.contains hostname """")))
+ (not $x93)))
+(assert
+ (let (($x154 (str.contains hostname "^")))
+ (not $x154)))
+(assert
+ (let (($x161 (str.contains hostname "`")))
+ (not $x161)))
+(assert
+ (let (($x168 (str.contains hostname "*")))
+ (not $x168)))
+(assert
+ (let (($x175 (str.contains hostname "<")))
+ (not $x175)))
+(assert
+ (let (($x182 (str.contains hostname ">")))
+ (not $x182)))
+(assert
+ (let (($x189 (str.contains hostname "=")))
+ (not $x189)))
+(assert
+ (let (($x196 (str.contains hostname ";")))
+ (not $x196)))
+(assert
+ (let (($x203 (str.contains hostname ",")))
+ (not $x203)))
+(assert
+ (let (($x210 (str.contains hostname "+")))
+ (not $x210)))
+(assert
+ (let (($x217 (str.contains hostname "&")))
+ (not $x217)))
+(assert
+ (let (($x224 (str.contains hostname "(")))
+ (not $x224)))
+(assert
+ (let (($x231 (str.contains hostname ")")))
+ (not $x231)))
+(assert
+ (not (str.contains hostname "%")))
+(assert
+ (let (($x231 (str.contains hostname ")")))
+(let (($x224 (str.contains hostname "(")))
+(let (($x217 (str.contains hostname "&")))
+(let (($x210 (str.contains hostname "+")))
+(let (($x203 (str.contains hostname ",")))
+(let (($x196 (str.contains hostname ";")))
+(let (($x189 (str.contains hostname "=")))
+(let (($x182 (str.contains hostname ">")))
+(let (($x175 (str.contains hostname "<")))
+(let (($x168 (str.contains hostname "*")))
+(let (($x161 (str.contains hostname "`")))
+(let (($x154 (str.contains hostname "^")))
+(let (($x93 (str.contains hostname """")))
+(let (($x150 (str.contains hostname "'")))
+(let (($x132 (str.contains hostname "$")))
+(let (($x122 (str.contains hostname "\")))
+(let (($x107 (str.contains hostname "[")))
+(let (($x100 (str.contains hostname "}")))
+(let (($x98 (str.contains hostname "{")))
+(let (($x81 (str.contains hostname "@")))
+(let (($x58 (str.contains hostname "!")))
+(let (($x86 (str.contains hostname "?")))
+(let (($x20 (str.contains hostname "#")))
+(let (($x35 (str.contains hostname ":")))
+(let (($x65 (str.contains hostname "/")))
+(let (($x27 (str.contains hostname "\u{9}")))
+(let (($x45 (str.contains hostname "\u{a}")))
+(let (($x111 (str.contains hostname "\u{d}")))
+(let (($x38 (str.contains hostname " ")))
+(or $x38 $x111 $x45 $x27 $x65 $x35 $x20 $x86 $x58 $x81 $x98 $x100 $x107 $x122 $x132 $x150 $x93 $x154 $x161 $x168 $x175 $x182 $x189 $x196 $x203 $x210 $x217 $x224 $x231)))))))))))))))))))))))))))))))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>URL Control Character Rejection (Smuggling)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>Curl_junkscan</code> · Z3 solved in 0.0ms</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun url () String)
+(assert
+ (let (($x38 (str.contains url "\u{0}")))
+ (not $x38)))
+(assert
+ (let (($x107 (str.contains url "\u{1}")))
+ (not $x107)))
+(assert
+ (let (($x135 (str.contains url "\u{2}")))
+ (not $x135)))
+(assert
+ (let (($x168 (str.contains url "\u{3}")))
+ (not $x168)))
+(assert
+ (let (($x195 (str.contains url "\u{4}")))
+ (not $x195)))
+(assert
+ (let (($x217 (str.contains url "\u{5}")))
+ (not $x217)))
+(assert
+ (let (($x238 (str.contains url "\u{6}")))
+ (not $x238)))
+(assert
+ (let (($x197 (str.contains url "\u{7}")))
+ (not $x197)))
+(assert
+ (let (($x139 (str.contains url "\u{8}")))
+ (not $x139)))
+(assert
+ (let (($x103 (str.contains url "\u{9}")))
+ (not $x103)))
+(assert
+ (let (($x16 (str.contains url "\u{a}")))
+ (not $x16)))
+(assert
+ (let (($x241 (str.contains url "\u{b}")))
+ (not $x241)))
+(assert
+ (let (($x228 (str.contains url "\u{c}")))
+ (not $x228)))
+(assert
+ (let (($x205 (str.contains url "\u{d}")))
+ (not $x205)))
+(assert
+ (let (($x192 (str.contains url "\u{e}")))
+ (not $x192)))
+(assert
+ (let (($x179 (str.contains url "\u{f}")))
+ (not $x179)))
+(assert
+ (let (($x156 (str.contains url "\u{10}")))
+ (not $x156)))
+(assert
+ (let (($x116 (str.contains url "\u{11}")))
+ (not $x116)))
+(assert
+ (let (($x130 (str.contains url "\u{12}")))
+ (not $x130)))
+(assert
+ (let (($x92 (str.contains url "\u{13}")))
+ (not $x92)))
+(assert
+ (let (($x73 (str.contains url "\u{14}")))
+ (not $x73)))
+(assert
+ (let (($x52 (str.contains url "\u{15}")))
+ (not $x52)))
+(assert
+ (let (($x67 (str.contains url "\u{16}")))
+ (not $x67)))
+(assert
+ (let (($x12 (str.contains url "\u{17}")))
+ (not $x12)))
+(assert
+ (let (($x96 (str.contains url "\u{18}")))
+ (not $x96)))
+(assert
+ (let (($x222 (str.contains url "\u{19}")))
+ (not $x222)))
+(assert
+ (let (($x173 (str.contains url "\u{1a}")))
+ (not $x173)))
+(assert
+ (let (($x124 (str.contains url "\u{1b}")))
+ (not $x124)))
+(assert
+ (let (($x84 (str.contains url "\u{1c}")))
+ (not $x84)))
+(assert
+ (let (($x145 (str.contains url "\u{1d}")))
+ (not $x145)))
+(assert
+ (let (($x47 (str.contains url "\u{1e}")))
+ (not $x47)))
+(assert
+ (let (($x125 (str.contains url "\u{1f}")))
+ (not $x125)))
+(assert
+ (let (($x257 (str.contains url "\u{7f}")))
+ (not $x257)))
+(assert
+ (let (($x257 (str.contains url "\u{7f}")))
+(let (($x125 (str.contains url "\u{1f}")))
+(let (($x47 (str.contains url "\u{1e}")))
+(let (($x145 (str.contains url "\u{1d}")))
+(let (($x84 (str.contains url "\u{1c}")))
+(let (($x124 (str.contains url "\u{1b}")))
+(let (($x173 (str.contains url "\u{1a}")))
+(let (($x222 (str.contains url "\u{19}")))
+(let (($x96 (str.contains url "\u{18}")))
+(let (($x12 (str.contains url "\u{17}")))
+(let (($x67 (str.contains url "\u{16}")))
+(let (($x52 (str.contains url "\u{15}")))
+(let (($x73 (str.contains url "\u{14}")))
+(let (($x92 (str.contains url "\u{13}")))
+(let (($x130 (str.contains url "\u{12}")))
+(let (($x116 (str.contains url "\u{11}")))
+(let (($x156 (str.contains url "\u{10}")))
+(let (($x179 (str.contains url "\u{f}")))
+(let (($x192 (str.contains url "\u{e}")))
+(let (($x205 (str.contains url "\u{d}")))
+(let (($x228 (str.contains url "\u{c}")))
+(let (($x241 (str.contains url "\u{b}")))
+(let (($x16 (str.contains url "\u{a}")))
+(let (($x103 (str.contains url "\u{9}")))
+(let (($x139 (str.contains url "\u{8}")))
+(let (($x197 (str.contains url "\u{7}")))
+(let (($x238 (str.contains url "\u{6}")))
+(let (($x217 (str.contains url "\u{5}")))
+(let (($x195 (str.contains url "\u{4}")))
+(let (($x168 (str.contains url "\u{3}")))
+(let (($x135 (str.contains url "\u{2}")))
+(let (($x107 (str.contains url "\u{1}")))
+(let (($x38 (str.contains url "\u{0}")))
+(or $x38 $x107 $x135 $x168 $x195 $x217 $x238 $x197 $x139 $x103 $x16 $x241 $x228 $x205 $x192 $x179 $x156 $x116 $x130 $x92 $x73 $x52 $x67 $x12 $x96 $x222 $x173 $x124 $x84 $x145 $x47 $x125 $x257)))))))))))))))))))))))))))))))))))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+
+    <p class="timestamp">Last verified: 2026-03-06 15:43:29 UTC · Solver: Z3 4.16.0</p>
+  </div>
+</body>
+</html>

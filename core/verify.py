@@ -187,6 +187,93 @@ def generate_html(results, project, version):
     return html
 
 
+def generate_dashboard(projects):
+    """Generate the top-level results.html with one row per project."""
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
+    total_projects = len(projects)
+    all_green = all(p["status"] == "VERIFIED" for p in projects)
+
+    rows = ""
+    for p in sorted(projects, key=lambda x: x["name"]):
+        color = "green" if p["status"] == "VERIFIED" else "red"
+        rows += f"""
+    <a href="/{p['slug']}.html" class="project-row {color}">
+      <div class="project-left">
+        <span class="status-dot {color}"></span>
+        <div>
+          <div class="project-name">{p['name']}</div>
+          <div class="project-meta">{p['version']} · {p['language']} · {p['checks']} properties checked</div>
+        </div>
+      </div>
+      <span class="badge {color}">{p['status']}</span>
+    </a>"""
+
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nischoy — Verification Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+  <style>
+    :root {{
+      --bg: #0a0e17; --bg-card: #111827; --text: #e2e8f0;
+      --text-muted: #94a3b8; --accent: #22d3ee;
+      --green: #22c55e; --red: #ef4444; --border: #1e293b;
+    }}
+    * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+    body {{
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }}
+    .container {{ max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }}
+    .back-link {{ color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }}
+    .back-link:hover {{ color: var(--accent); }}
+    h1 {{
+      font-size: 2.2rem; font-weight: 800; margin: 2rem 0 0.5rem;
+      background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }}
+    .subtitle {{ color: var(--text-muted); margin-bottom: 2.5rem; }}
+    .project-row {{
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 0.75rem;
+      text-decoration: none; color: var(--text); transition: all 0.2s;
+    }}
+    .project-row:hover {{ border-color: var(--accent); transform: translateY(-1px); }}
+    .project-row.green {{ border-left: 3px solid var(--green); }}
+    .project-row.red {{ border-left: 3px solid var(--red); }}
+    .project-left {{ display: flex; align-items: center; gap: 1rem; }}
+    .status-dot {{ width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }}
+    .status-dot.green {{ background: var(--green); box-shadow: 0 0 8px rgba(34, 197, 94, 0.5); }}
+    .status-dot.red {{ background: var(--red); box-shadow: 0 0 8px rgba(239, 68, 68, 0.5); }}
+    .project-name {{ font-weight: 700; font-size: 1.1rem; }}
+    .project-meta {{ color: var(--text-muted); font-size: 0.8rem; }}
+    .badge {{
+      padding: 0.2rem 0.6rem; border-radius: 4px;
+      font-size: 0.75rem; font-weight: 700;
+    }}
+    .badge.green {{ background: rgba(34, 197, 94, 0.15); color: var(--green); }}
+    .badge.red {{ background: rgba(239, 68, 68, 0.15); color: var(--red); }}
+    .timestamp {{ color: var(--text-muted); font-size: 0.8rem; margin-top: 2rem; }}
+    .count {{ color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← nischoy.ai</a>
+    <h1>Verification Dashboard</h1>
+    <p class="subtitle">SMT2 formal verification of security-critical open source code paths.</p>
+    <p class="count">{total_projects} project(s) verified</p>
+    {rows}
+    <p class="timestamp">Last updated: {timestamp} · Solver: Z3 {z3.get_version_string()}</p>
+  </div>
+</body>
+</html>"""
+
+
 def main():
     source = "/tmp/curl/lib/urlapi.c"
     if not os.path.exists(source):
@@ -224,22 +311,60 @@ def main():
         print(f"    → {r['status']} ({r.get('elapsed_ms', '?')}ms)")
         results.append(r)
     
-    # Generate HTML results page
+    # Generate per-project detail page
     output_dir = os.path.join(os.path.dirname(__file__), '..', 'public')
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'results.html')
     
-    html = generate_html(results, "curl", "master")
-    with open(output_path, 'w') as f:
-        f.write(html)
+    project_slug = "curl"
+    detail_path = os.path.join(output_dir, f'{project_slug}.html')
+    detail_html = generate_html(results, "curl", "master")
+    with open(detail_path, 'w') as f:
+        f.write(detail_html)
+    print(f"Detail page written to {detail_path}")
     
-    print(f"\nResults written to {output_path}")
-    
+    # Generate/update the summary dashboard (results.html)
+    # This lists all projects with a single red/green status each.
     failed = sum(1 for r in results if r["status"] == "FAILED")
+    total = len(results)
+    passed = total - failed
+    
+    project_result = {
+        "slug": project_slug,
+        "name": "curl",
+        "version": "master",
+        "language": "C",
+        "checks": total,
+        "passed": passed,
+        "failed": failed,
+        "status": "VERIFIED" if failed == 0 else "FAILED",
+    }
+    
+    # Load existing project results or start fresh
+    manifest_path = os.path.join(output_dir, 'manifest.json')
+    if os.path.exists(manifest_path):
+        with open(manifest_path) as f:
+            projects = json.load(f)
+    else:
+        projects = []
+    
+    # Update or add this project
+    projects = [p for p in projects if p["slug"] != project_slug]
+    projects.append(project_result)
+    
+    with open(manifest_path, 'w') as f:
+        json.dump(projects, f, indent=2)
+    
+    # Generate the summary dashboard
+    dashboard_path = os.path.join(output_dir, 'results.html')
+    dashboard_html = generate_dashboard(projects)
+    with open(dashboard_path, 'w') as f:
+        f.write(dashboard_html)
+    print(f"Dashboard written to {dashboard_path}")
+    
     if failed:
         print(f"\n⚠️  {failed} constraint(s) FAILED — potential vulnerabilities found!")
     else:
-        print(f"\n✅ All {len(results)} constraints VERIFIED")
+        print(f"\n✅ All {total} constraints VERIFIED")
 
 if __name__ == "__main__":
     main()
