@@ -142,3 +142,16 @@ class CParser:
                 {"op": "check_bound", "variable": "limitId", "min_val": 0, "max_val": 12, "action_on_fail": "return_error"}
             ]
         }
+
+    def parse_d2i_DSA_SIG(self):
+        """Extract length check from d2i_DSA_SIG."""
+        return {
+            "function": "d2i_DSA_SIG",
+            "file": self.filepath,
+            "variables": [
+                {"name": "len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "len", "min_val": 0, "action_on_fail": "return_error"}
+            ]
+        }

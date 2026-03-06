@@ -354,12 +354,20 @@ def get_sqlite_checks(parser):
          SecurityConstraints.sqlite3_limit_bounds),
     ]
 
+def get_openssl_checks(parser):
+    return [
+        ("DSA_SIG DER decode length bounds",
+         parser.parse_d2i_DSA_SIG(),
+         SecurityConstraints.dsa_sig_len_bounds),
+    ]
+
 def main():
     registry = [
         ("curl", "curl", "master", "C", "/tmp/curl/lib/urlapi.c", get_curl_checks),
         ("zlib", "zlib", "master", "C", "/tmp/zlib/adler32.c", get_zlib_checks),
         ("libsodium", "libsodium", "master", "C", "/tmp/libsodium/src/libsodium/crypto_kdf/blake2b/kdf_blake2b.c", get_libsodium_checks),
         ("sqlite", "sqlite", "master", "C", "/tmp/sqlite/src/main.c", get_sqlite_checks),
+        ("openssl", "OpenSSL", "master", "C", "/tmp/openssl/crypto/dsa/dsa_sign.c", get_openssl_checks),
     ]
     
     output_dir = os.path.join(os.path.dirname(__file__), '..', 'public')

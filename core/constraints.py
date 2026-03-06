@@ -95,3 +95,11 @@ class SecurityConstraints:
         if limitId is None:
             return None
         return z3.Or(limitId < 0, limitId > 12)
+
+    @staticmethod
+    def dsa_sig_len_bounds(vars_dict):
+        """Length must be non-negative."""
+        length = vars_dict.get('len')
+        if length is None:
+            return None
+        return length < 0

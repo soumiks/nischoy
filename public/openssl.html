@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nischoy — libsodium Verification Results</title>
+  <title>Nischoy — OpenSSL Verification Results</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
   <style>
     :root {
@@ -73,7 +73,7 @@
 <body>
   <div class="container">
     <a href="/" class="back-link">← nischoy.ai</a>
-    <h1>libsodium Verification</h1>
+    <h1>OpenSSL Verification</h1>
     <p style="color: var(--text-muted); margin-bottom: 0.5rem;">
       SMT2 formal verification of security-critical code paths
     </p>
@@ -101,21 +101,19 @@
     <div class="result-card green">
       <div class="result-header">
         <span class="status-dot green"></span>
-        <h3>KDF Blake2b Subkey Length Bounds</h3>
+        <h3>DSA_SIG DER decode length bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>crypto_kdf_blake2b_derive_from_key</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>d2i_DSA_SIG</code> · Z3 solved in 1.1ms</p>
       <details>
         <summary>View SMT2 Constraints</summary>
         <pre><code>; benchmark generated from python API
 (set-info :status unknown)
-(declare-fun subkey_len () Int)
+(declare-fun len () Int)
 (assert
- (<= subkey_len 64))
+ (>= len 0))
 (assert
- (>= subkey_len 16))
-(assert
- (or (< subkey_len 16) (> subkey_len 64)))
+ (< len 0))
 (check-sat)
 </code></pre>
       </details>
