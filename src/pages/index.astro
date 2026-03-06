@@ -1,330 +1,54 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
-import { SITE_TITLE, SITE_DESCRIPTION, CONTACT_EMAIL } from "../consts";
-
-const services = [
-	{
-		icon: "🏪",
-		title: "A2A Agent Marketplace",
-		description:
-			"A public registry where agents advertise their Agent Cards. Discover, list, and transact — like npm, but for autonomous agents.",
-	},
-	{
-		icon: "🔌",
-		title: "A2A Gateway for SMBs",
-		description:
-			"Expose your existing software — Shopify, QuickBooks, calendars — as A2A-compatible agents without writing a line of code.",
-	},
-	{
-		icon: "✅",
-		title: "Agent Testing & Certification",
-		description:
-			"Verify that agents are well-behaved: no data leaks, graceful error handling, proper auth. Earn the \"A2A Certified\" badge.",
-	},
-	{
-		icon: "🏗️",
-		title: "Vertical Agent Packs",
-		description:
-			"Industry-specific agent solutions for legal, real estate, healthcare, and DeFi — built on horizontal A2A infrastructure.",
-	},
-	{
-		icon: "🔐",
-		title: "Authentication & Identity Broker",
-		description:
-			"An identity layer for agent-to-agent trust, delegation, and audit trails. \"Sign in with A2A\" for regulated industries.",
-	},
-	{
-		icon: "📊",
-		title: "Observability & Debugging",
-		description:
-			"Trace agent-to-agent calls, visualize task flows, alert on failures, and log everything for compliance. Datadog for A2A.",
-	},
-	{
-		icon: "🌉",
-		title: "A2A-to-Legacy Bridge",
-		description:
-			"Wrap legacy REST, SOAP, or FTP systems as A2A agents. Make your 2015 API A2A-compatible in minutes.",
-	},
-	{
-		icon: "🤖",
-		title: "Personal Agent Orchestrator",
-		description:
-			"A privacy-first app where your personal agent delegates tasks to specialized A2A agents on your behalf.",
-	},
-	{
-		icon: "⛓️",
-		title: "Agent Escrow & Micropayments",
-		description:
-			"Crypto-native escrow and micropayment rails for agent-to-agent transactions. Trustless settlement for autonomous commerce.",
-	},
-];
+import { SITE_TITLE } from "../consts";
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={SITE_TITLE} description="Coming soon." />
 		<style>
-			/* ── Layout ── */
-			.container {
-				max-width: 1120px;
-				margin: 0 auto;
-				padding: 0 1.5rem;
-			}
-
-			/* ── Nav ── */
-			nav {
-				position: sticky;
-				top: 0;
-				z-index: 100;
-				background: rgba(255, 255, 255, 0.92);
-				backdrop-filter: blur(12px);
-				border-bottom: 1px solid var(--border);
-			}
-			.nav-inner {
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				height: 64px;
-			}
-			.wordmark {
-				font-size: 1.35rem;
-				font-weight: 700;
-				color: var(--text);
-				letter-spacing: -0.02em;
-			}
-			.nav-links {
-				display: flex;
-				gap: 2rem;
-			}
-			.nav-links a {
-				color: var(--text-secondary);
-				font-size: 0.95rem;
-				font-weight: 500;
-				transition: color 0.15s;
-			}
-			.nav-links a:hover {
-				color: var(--text);
-			}
-
-			/* ── Hero ── */
-			.hero {
-				padding: 6rem 0 5rem;
-				text-align: center;
-			}
-			.hero h1 {
-				font-size: clamp(2.2rem, 5vw, 3.4rem);
-				letter-spacing: -0.03em;
-				margin-bottom: 1.25rem;
-				line-height: 1.1;
-			}
-			.hero h1 span {
-				color: var(--accent);
-			}
-			.hero p {
-				max-width: 600px;
-				margin: 0 auto;
-				font-size: 1.15rem;
-				color: var(--text-secondary);
-				line-height: 1.7;
-			}
-
-			/* ── Section shared ── */
-			section {
-				padding: 5rem 0;
-			}
-			.section-label {
-				text-transform: uppercase;
-				letter-spacing: 0.08em;
-				font-size: 0.8rem;
-				font-weight: 700;
-				color: var(--accent);
-				margin-bottom: 0.5rem;
-			}
-			.section-heading {
-				font-size: clamp(1.6rem, 3vw, 2.2rem);
-				letter-spacing: -0.02em;
-				margin-bottom: 3rem;
-			}
-
-			/* ── Services grid ── */
-			#services {
-				background: var(--bg-alt);
-			}
-			.services-grid {
-				display: grid;
-				grid-template-columns: repeat(3, 1fr);
-				gap: 1.5rem;
-			}
-			.service-card {
-				background: var(--bg);
-				border: 1px solid var(--border);
-				border-radius: var(--radius);
-				padding: 2rem 1.75rem;
-				transition: box-shadow 0.2s, transform 0.2s;
-			}
-			.service-card:hover {
-				box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-				transform: translateY(-2px);
-			}
-			.service-icon {
-				font-size: 1.75rem;
-				margin-bottom: 0.75rem;
-			}
-			.service-card h3 {
-				font-size: 1.1rem;
-				margin-bottom: 0.5rem;
-			}
-			.service-card p {
-				color: var(--text-secondary);
-				font-size: 0.92rem;
-				line-height: 1.6;
+			body {
 				margin: 0;
-			}
-
-			/* ── CTA ── */
-			#contact {
-				text-align: center;
-			}
-			.cta-options {
+				min-height: 100vh;
 				display: flex;
-				flex-wrap: wrap;
-				gap: 1rem;
-				justify-content: center;
-				margin-bottom: 3rem;
-			}
-			.btn {
-				display: inline-flex;
 				align-items: center;
-				gap: 0.5rem;
-				padding: 0.75rem 1.75rem;
-				border-radius: 8px;
-				font-size: 0.95rem;
-				font-weight: 600;
-				transition: background 0.15s, transform 0.1s;
-				cursor: pointer;
+				justify-content: center;
+				background: #0a0e17;
+				color: #e2e8f0;
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 			}
-			.btn-primary {
-				background: var(--accent);
-				color: #fff;
-				border: none;
-			}
-			.btn-primary:hover {
-				background: var(--accent-hover);
-				color: #fff;
-				transform: translateY(-1px);
-			}
-			.btn-outline {
-				background: transparent;
-				color: var(--text);
-				border: 1px solid var(--border);
-			}
-			.btn-outline:hover {
-				background: var(--bg-alt);
-				color: var(--text);
-				transform: translateY(-1px);
-			}
-
-			/* ── Calendly embed ── */
-			.calendly-inline-widget {
-				max-width: 700px;
-				margin: 0 auto;
-				border-radius: var(--radius);
-				overflow: hidden;
-			}
-
-			/* ── Footer ── */
-			footer {
-				border-top: 1px solid var(--border);
-				padding: 2rem 0;
+			.wrap {
 				text-align: center;
-				font-size: 0.85rem;
-				color: var(--text-secondary);
+				padding: 2rem;
 			}
-
-			/* ── Responsive ── */
-			@media (max-width: 900px) {
-				.services-grid {
-					grid-template-columns: repeat(2, 1fr);
-				}
+			h1 {
+				font-size: clamp(2rem, 5vw, 3.5rem);
+				font-weight: 800;
+				margin-bottom: 1rem;
+				background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
 			}
-			@media (max-width: 600px) {
-				.hero {
-					padding: 4rem 0 3rem;
-				}
-				.services-grid {
-					grid-template-columns: 1fr;
-				}
-				.nav-links {
-					gap: 1.25rem;
-				}
+			p {
+				color: #94a3b8;
+				font-size: 1.1rem;
+				margin-bottom: 2rem;
+			}
+			a {
+				color: #22d3ee;
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
 			}
 		</style>
 	</head>
 	<body>
-		<!-- Nav -->
-		<nav>
-			<div class="container nav-inner">
-				<a href="/" class="wordmark">Nischoy</a>
-				<div class="nav-links">
-					<a href="#services">Services</a>
-					<a href="#contact">Contact</a>
-				</div>
-			</div>
-		</nav>
-
-		<!-- Hero -->
-		<section class="hero">
-			<div class="container">
-				<h1>AI Agent Infrastructure<br /><span>Built on A2A</span></h1>
-				<p>
-					We build the missing pieces of the Agent-to-Agent ecosystem —
-					marketplaces, gateways, identity, observability, and more — so your
-					agents can work together seamlessly.
-				</p>
-			</div>
-		</section>
-
-		<!-- Services -->
-		<section id="services">
-			<div class="container">
-				<p class="section-label">What We Build</p>
-				<h2 class="section-heading">Nine services. One protocol.</h2>
-				<div class="services-grid">
-					{
-						services.map((s) => (
-							<div class="service-card">
-								<div class="service-icon">{s.icon}</div>
-								<h3>{s.title}</h3>
-								<p>{s.description}</p>
-							</div>
-						))
-					}
-				</div>
-			</div>
-		</section>
-
-		<!-- Contact / CTA -->
-		<section id="contact">
-			<div class="container">
-				<p class="section-label">Get in Touch</p>
-				<h2 class="section-heading">Ready to build with agents?</h2>
-				<div class="cta-options">
-					<a href={`mailto:${CONTACT_EMAIL}`} class="btn btn-primary"
-						>Email Us</a
-					>
-				</div>
-				<!-- Calendly inline widget -->
-				<div class="calendly-inline-widget" data-url="https://calendly.com/soumiks-1sha/30min?hide_event_type_details=1&hide_gdpr_banner=1" style="min-width:320px;height:700px;"></div>
-				<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-			</div>
-		</section>
-
-		<!-- Footer -->
-		<footer>
-			<div class="container">
-				&copy; {new Date().getFullYear()} Nischoy. All rights reserved.
-			</div>
-		</footer>
+		<div class="wrap">
+			<h1>nischoy</h1>
+			<p>Coming soon.</p>
+			<a href="mailto:sales@nischoy.ai">sales@nischoy.ai</a>
+		</div>
 	</body>
 </html>
