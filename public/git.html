@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nischoy — zlib Verification Results</title>
+  <title>Nischoy — git Verification Results</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
   <style>
     :root {
@@ -73,7 +73,7 @@
 <body>
   <div class="container">
     <a href="/" class="back-link">← nischoy.ai</a>
-    <h1>zlib Verification</h1>
+    <h1>git Verification</h1>
     <p style="color: var(--text-muted); margin-bottom: 0.5rem;">
       SMT2 formal verification of security-critical code paths
     </p>
@@ -101,19 +101,21 @@
     <div class="result-card green">
       <div class="result-header">
         <span class="status-dot green"></span>
-        <h3>Adler32 Length Bounds</h3>
+        <h3>Protocol Version Bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>adler32_combine_</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>discover_version</code> · Z3 solved in 0.0ms</p>
       <details>
         <summary>View SMT2 Constraints</summary>
         <pre><code>; benchmark generated from python API
 (set-info :status unknown)
-(declare-fun len2 () Int)
+(declare-fun version () Int)
 (assert
- (>= len2 0))
+ (<= version 2))
 (assert
- (< len2 0))
+ (>= version 0))
+(assert
+ (or (< version 0) (> version 2)))
 (check-sat)
 </code></pre>
       </details>

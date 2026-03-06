@@ -48,5 +48,75 @@
     "passed": 1,
     "failed": 0,
     "status": "VERIFIED"
+  },
+  {
+    "slug": "nginx",
+    "name": "nginx",
+    "version": "master",
+    "language": "C",
+    "checks": 1,
+    "passed": 1,
+    "failed": 0,
+    "status": "VERIFIED"
+  },
+  {
+    "slug": "libxml2",
+    "name": "libxml2",
+    "version": "master",
+    "language": "C",
+    "checks": 1,
+    "passed": 1,
+    "failed": 0,
+    "status": "VERIFIED"
+  },
+  {
+    "slug": "libpng",
+    "name": "libpng",
+    "version": "master",
+    "language": "C",
+    "checks": 1,
+    "passed": 1,
+    "failed": 0,
+    "status": "VERIFIED"
+  },
+  {
+    "slug": "mbedtls",
+    "name": "mbedTLS",
+    "version": "master",
+    "language": "C",
+    "checks": 1,
+    "passed": 1,
+    "failed": 0,
+    "status": "VERIFIED"
+  },
+  {
+    "slug": "openssh",
+    "name": "OpenSSH",
+    "version": "master",
+    "language": "C",
+    "checks": 1,
+    "passed": 1,
+    "failed": 0,
+    "status": "VERIFIED"
+  },
+  {
+    "slug": "sudo",
+    "name": "sudo",
+    "version": "master",
+    "language": "C",
+    "checks": 1,
+    "passed": 1,
+    "failed": 0,
+    "status": "VERIFIED"
+  },
+  {
+    "slug": "git",
+    "name": "git",
+    "version": "master",
+    "language": "C",
+    "checks": 1,
+    "passed": 1,
+    "failed": 0,
+    "status": "VERIFIED"
   }
 ]

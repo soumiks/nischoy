@@ -155,3 +155,95 @@ class CParser:
                 {"op": "check_bound", "variable": "len", "min_val": 0, "action_on_fail": "return_error"}
             ]
         }
+
+    def parse_ngx_http_v2_state_field_len(self):
+        """Extract length check from ngx_http_v2_state_field_len."""
+        return {
+            "function": "ngx_http_v2_state_field_len",
+            "file": self.filepath,
+            "variables": [
+                {"name": "len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "len", "min_val": 0, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_libxml2_parser_max_depth(self):
+        """Extract parser entity expansion depth limit from libxml2."""
+        return {
+            "function": "xmlStringLenDecodeEntities",
+            "file": self.filepath,
+            "variables": [
+                {"name": "depth", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "depth", "min_val": 0, "max_val": 40, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_png_ihdr_width(self):
+        """Extract IHDR image width must be positive from libpng."""
+        return {
+            "function": "png_handle_IHDR",
+            "file": self.filepath,
+            "variables": [
+                {"name": "width", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "width", "min_val": 1, "max_val": 2147483647, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_mbedtls_ssl_record_len(self):
+        """Extract SSL record data_len bounds check from mbedTLS."""
+        return {
+            "function": "ssl_encrypt_buf",
+            "file": self.filepath,
+            "variables": [
+                {"name": "data_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "data_len", "min_val": 0, "max_val": 16384, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_openssh_auth_max_tries(self):
+        """Extract authentication max tries bounds from OpenSSH."""
+        return {
+            "function": "auth_maxtries_exceeded",
+            "file": self.filepath,
+            "variables": [
+                {"name": "authenticated", "type": "int"},
+                {"name": "max_authtries", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "max_authtries", "min_val": 1, "max_val": 100, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_sudo_uid_check(self):
+        """Extract UID validation from sudo."""
+        return {
+            "function": "sudo_check_suid",
+            "file": self.filepath,
+            "variables": [
+                {"name": "uid", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "uid", "min_val": 0, "max_val": 65534, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_git_protocol_version(self):
+        """Extract protocol version bounds from git."""
+        return {
+            "function": "discover_version",
+            "file": self.filepath,
+            "variables": [
+                {"name": "version", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "version", "min_val": 0, "max_val": 2, "action_on_fail": "return_error"}
+            ]
+        }

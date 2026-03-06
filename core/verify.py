@@ -361,6 +361,55 @@ def get_openssl_checks(parser):
          SecurityConstraints.dsa_sig_len_bounds),
     ]
 
+def get_nginx_checks(parser):
+    return [
+        ("HTTP/2 Field Length Bounds",
+         parser.parse_ngx_http_v2_state_field_len(),
+         SecurityConstraints.nginx_field_len_bounds),
+    ]
+
+def get_libxml2_checks(parser):
+    return [
+        ("Entity Expansion Depth Limit",
+         parser.parse_libxml2_parser_max_depth(),
+         SecurityConstraints.libxml2_depth_bounds),
+    ]
+
+def get_libpng_checks(parser):
+    return [
+        ("IHDR Image Width Bounds",
+         parser.parse_png_ihdr_width(),
+         SecurityConstraints.png_width_bounds),
+    ]
+
+def get_mbedtls_checks(parser):
+    return [
+        ("SSL Record Data Length Bounds",
+         parser.parse_mbedtls_ssl_record_len(),
+         SecurityConstraints.mbedtls_record_len_bounds),
+    ]
+
+def get_openssh_checks(parser):
+    return [
+        ("Max Auth Tries Bounds",
+         parser.parse_openssh_auth_max_tries(),
+         SecurityConstraints.openssh_max_authtries_bounds),
+    ]
+
+def get_sudo_checks(parser):
+    return [
+        ("UID Bounds Validation",
+         parser.parse_sudo_uid_check(),
+         SecurityConstraints.sudo_uid_bounds),
+    ]
+
+def get_git_checks(parser):
+    return [
+        ("Protocol Version Bounds",
+         parser.parse_git_protocol_version(),
+         SecurityConstraints.git_protocol_version_bounds),
+    ]
+
 def main():
     registry = [
         ("curl", "curl", "master", "C", "/tmp/curl/lib/urlapi.c", get_curl_checks),
@@ -368,6 +417,13 @@ def main():
         ("libsodium", "libsodium", "master", "C", "/tmp/libsodium/src/libsodium/crypto_kdf/blake2b/kdf_blake2b.c", get_libsodium_checks),
         ("sqlite", "sqlite", "master", "C", "/tmp/sqlite/src/main.c", get_sqlite_checks),
         ("openssl", "OpenSSL", "master", "C", "/tmp/openssl/crypto/dsa/dsa_sign.c", get_openssl_checks),
+        ("nginx", "nginx", "master", "C", "/tmp/nginx/src/http/v2/ngx_http_v2.c", get_nginx_checks),
+        ("libxml2", "libxml2", "master", "C", "/tmp/libxml2/parser.c", get_libxml2_checks),
+        ("libpng", "libpng", "master", "C", "/tmp/libpng/pngrutil.c", get_libpng_checks),
+        ("mbedtls", "mbedTLS", "master", "C", "/tmp/mbedtls/library/ssl_msg.c", get_mbedtls_checks),
+        ("openssh", "OpenSSH", "master", "C", "/tmp/openssh/auth.c", get_openssh_checks),
+        ("sudo", "sudo", "master", "C", "/tmp/sudo/src/sudo.c", get_sudo_checks),
+        ("git", "git", "master", "C", "/tmp/git/connect.c", get_git_checks),
     ]
     
     output_dir = os.path.join(os.path.dirname(__file__), '..', 'public')

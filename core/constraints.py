@@ -103,3 +103,59 @@ class SecurityConstraints:
         if length is None:
             return None
         return length < 0
+
+    @staticmethod
+    def nginx_field_len_bounds(vars_dict):
+        """HTTP/2 field length must be non-negative."""
+        length = vars_dict.get('len')
+        if length is None:
+            return None
+        return length < 0
+
+    @staticmethod
+    def libxml2_depth_bounds(vars_dict):
+        """Parser entity expansion depth must be within safe limits."""
+        depth = vars_dict.get('depth')
+        if depth is None:
+            return None
+        return z3.Or(depth < 0, depth > 40)
+
+    @staticmethod
+    def png_width_bounds(vars_dict):
+        """PNG IHDR width must be positive and within INT_MAX."""
+        width = vars_dict.get('width')
+        if width is None:
+            return None
+        return z3.Or(width < 1, width > 2147483647)
+
+    @staticmethod
+    def mbedtls_record_len_bounds(vars_dict):
+        """SSL record data length must be within max content length (16384)."""
+        data_len = vars_dict.get('data_len')
+        if data_len is None:
+            return None
+        return z3.Or(data_len < 0, data_len > 16384)
+
+    @staticmethod
+    def openssh_max_authtries_bounds(vars_dict):
+        """Max auth tries must be positive and reasonable."""
+        max_authtries = vars_dict.get('max_authtries')
+        if max_authtries is None:
+            return None
+        return z3.Or(max_authtries < 1, max_authtries > 100)
+
+    @staticmethod
+    def sudo_uid_bounds(vars_dict):
+        """UID must be within valid range."""
+        uid = vars_dict.get('uid')
+        if uid is None:
+            return None
+        return z3.Or(uid < 0, uid > 65534)
+
+    @staticmethod
+    def git_protocol_version_bounds(vars_dict):
+        """Git protocol version must be 0, 1, or 2."""
+        version = vars_dict.get('version')
+        if version is None:
+            return None
+        return z3.Or(version < 0, version > 2)
