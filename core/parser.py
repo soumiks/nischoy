@@ -116,3 +116,16 @@ class CParser:
                 {"op": "check_bound", "variable": "len2", "min_val": 0, "action_on_fail": "return_error"}
             ]
         }
+
+    def parse_kdf_blake2b_derive_from_key(self):
+        """Extract subkey_len check from crypto_kdf_blake2b_derive_from_key."""
+        return {
+            "function": "crypto_kdf_blake2b_derive_from_key",
+            "file": self.filepath,
+            "variables": [
+                {"name": "subkey_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "subkey_len", "min_val": 16, "max_val": 64, "action_on_fail": "return_error"}
+            ]
+        }

@@ -79,3 +79,11 @@ class SecurityConstraints:
         if len2 is None:
             return None
         return len2 < 0
+
+    @staticmethod
+    def kdf_blake2b_subkey_len_bounds(vars_dict):
+        """Subkey length must be between 16 and 64."""
+        subkey_len = vars_dict.get('subkey_len')
+        if subkey_len is None:
+            return None
+        return z3.Or(subkey_len < 16, subkey_len > 64)

@@ -18,5 +18,15 @@
     "passed": 1,
     "failed": 0,
     "status": "VERIFIED"
+  },
+  {
+    "slug": "libsodium",
+    "name": "libsodium",
+    "version": "master",
+    "language": "C",
+    "checks": 1,
+    "passed": 1,
+    "failed": 0,
+    "status": "VERIFIED"
   }
 ]
