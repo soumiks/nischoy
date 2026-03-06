@@ -87,3 +87,11 @@ class SecurityConstraints:
         if subkey_len is None:
             return None
         return z3.Or(subkey_len < 16, subkey_len > 64)
+
+    @staticmethod
+    def sqlite3_limit_bounds(vars_dict):
+        """limitId must be non-negative and within N_LIMIT."""
+        limitId = vars_dict.get('limitId')
+        if limitId is None:
+            return None
+        return z3.Or(limitId < 0, limitId > 12)

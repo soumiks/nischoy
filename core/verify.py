@@ -347,11 +347,19 @@ def get_libsodium_checks(parser):
          SecurityConstraints.kdf_blake2b_subkey_len_bounds),
     ]
 
+def get_sqlite_checks(parser):
+    return [
+        ("SQLite3 Limit ID Bounds",
+         parser.parse_sqlite3_limit(),
+         SecurityConstraints.sqlite3_limit_bounds),
+    ]
+
 def main():
     registry = [
         ("curl", "curl", "master", "C", "/tmp/curl/lib/urlapi.c", get_curl_checks),
         ("zlib", "zlib", "master", "C", "/tmp/zlib/adler32.c", get_zlib_checks),
         ("libsodium", "libsodium", "master", "C", "/tmp/libsodium/src/libsodium/crypto_kdf/blake2b/kdf_blake2b.c", get_libsodium_checks),
+        ("sqlite", "sqlite", "master", "C", "/tmp/sqlite/src/main.c", get_sqlite_checks),
     ]
     
     output_dir = os.path.join(os.path.dirname(__file__), '..', 'public')

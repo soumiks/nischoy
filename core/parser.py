@@ -129,3 +129,16 @@ class CParser:
                 {"op": "check_bound", "variable": "subkey_len", "min_val": 16, "max_val": 64, "action_on_fail": "return_error"}
             ]
         }
+
+    def parse_sqlite3_limit(self):
+        """Extract limitId check from sqlite3_limit."""
+        return {
+            "function": "sqlite3_limit",
+            "file": self.filepath,
+            "variables": [
+                {"name": "limitId", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "limitId", "min_val": 0, "max_val": 12, "action_on_fail": "return_error"}
+            ]
+        }
