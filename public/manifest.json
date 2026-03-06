@@ -8,5 +8,15 @@
     "passed": 5,
     "failed": 0,
     "status": "VERIFIED"
+  },
+  {
+    "slug": "zlib",
+    "name": "zlib",
+    "version": "master",
+    "language": "C",
+    "checks": 1,
+    "passed": 1,
+    "failed": 0,
+    "status": "VERIFIED"
   }
 ]

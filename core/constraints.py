@@ -71,3 +71,11 @@ class SecurityConstraints:
         for ch in dangerous:
             violations.append(z3.Contains(host, z3.StringVal(ch)))
         return z3.Or(*violations)
+
+    @staticmethod
+    def adler32_len_bounds(vars_dict):
+        """Length must be non-negative."""
+        len2 = vars_dict.get('len2')
+        if len2 is None:
+            return None
+        return len2 < 0

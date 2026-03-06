@@ -103,3 +103,16 @@ class CParser:
                 {"op": "junkscan", "variable": "url", "max_control": 31},
             ]
         }
+
+    def parse_adler32_combine(self):
+        """Extract len2 negative check from adler32_combine_."""
+        return {
+            "function": "adler32_combine_",
+            "file": self.filepath,
+            "variables": [
+                {"name": "len2", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "len2", "min_val": 0, "action_on_fail": "return_error"}
+            ]
+        }

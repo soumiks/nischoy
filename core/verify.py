@@ -274,97 +274,104 @@ def generate_dashboard(projects):
 </html>"""
 
 
-def main():
-    source = "/tmp/curl/lib/urlapi.c"
-    if not os.path.exists(source):
-        print("ERROR: curl source not found. Clone it first.")
-        sys.exit(1)
-
-    parser = CParser(source)
-    
-    checks = [
-        ("Port Number Bounds (0-65535)", 
-         parser.parse_port_validation(), 
-         SecurityConstraints.port_bounds),
+def run_project_checks(project_slug, project_name, version, language, source_file, checks_config):
+    if not os.path.exists(source_file):
+        print(f"ERROR: {project_name} source not found at {source_file}. Clone it first.")
+        return False
         
-        ("IPv6 Bracket Integrity", 
-         parser.parse_ipv6_validation(), 
-         SecurityConstraints.ipv6_bracket_integrity),
-        
-        ("No CRLF in Credentials (Header Injection)", 
-         parser.parse_credential_validation(), 
-         SecurityConstraints.no_crlf_in_credentials),
-        
-        ("Hostname Character Validation (SSRF)", 
-         parser.parse_hostname_validation(), 
-         SecurityConstraints.hostname_no_dangerous_chars),
-        
-        ("URL Control Character Rejection (Smuggling)", 
-         parser.parse_junkscan(), 
-         SecurityConstraints.no_control_chars_in_url),
-    ]
-    
+    parser = CParser(source_file)
     results = []
-    for name, ast, constraint_fn in checks:
-        print(f"  Checking: {name}...")
+    for name, ast, constraint_fn in checks_config(parser):
+        print(f"  [{project_name}] Checking: {name}...")
         r = run_check(name, ast, constraint_fn)
         print(f"    → {r['status']} ({r.get('elapsed_ms', '?')}ms)")
         results.append(r)
-    
+        
     # Generate per-project detail page
     output_dir = os.path.join(os.path.dirname(__file__), '..', 'public')
     os.makedirs(output_dir, exist_ok=True)
     
-    project_slug = "curl"
     detail_path = os.path.join(output_dir, f'{project_slug}.html')
-    detail_html = generate_html(results, "curl", "master")
+    detail_html = generate_html(results, project_name, version)
     with open(detail_path, 'w') as f:
         f.write(detail_html)
     print(f"Detail page written to {detail_path}")
     
-    # Generate/update the summary dashboard (results.html)
-    # This lists all projects with a single red/green status each.
     failed = sum(1 for r in results if r["status"] == "FAILED")
     total = len(results)
     passed = total - failed
     
     project_result = {
         "slug": project_slug,
-        "name": "curl",
-        "version": "master",
-        "language": "C",
+        "name": project_name,
+        "version": version,
+        "language": language,
         "checks": total,
         "passed": passed,
         "failed": failed,
         "status": "VERIFIED" if failed == 0 else "FAILED",
     }
     
-    # Load existing project results or start fresh
+    return project_result
+
+def get_curl_checks(parser):
+    return [
+        ("Port Number Bounds (0-65535)", 
+         parser.parse_port_validation(), 
+         SecurityConstraints.port_bounds),
+        ("IPv6 Bracket Integrity", 
+         parser.parse_ipv6_validation(), 
+         SecurityConstraints.ipv6_bracket_integrity),
+        ("No CRLF in Credentials (Header Injection)", 
+         parser.parse_credential_validation(), 
+         SecurityConstraints.no_crlf_in_credentials),
+        ("Hostname Character Validation (SSRF)", 
+         parser.parse_hostname_validation(), 
+         SecurityConstraints.hostname_no_dangerous_chars),
+        ("URL Control Character Rejection (Smuggling)", 
+         parser.parse_junkscan(), 
+         SecurityConstraints.no_control_chars_in_url),
+    ]
+
+def get_zlib_checks(parser):
+    return [
+        ("Adler32 Length Bounds",
+         parser.parse_adler32_combine(),
+         SecurityConstraints.adler32_len_bounds),
+    ]
+
+def main():
+    registry = [
+        ("curl", "curl", "master", "C", "/tmp/curl/lib/urlapi.c", get_curl_checks),
+        ("zlib", "zlib", "master", "C", "/tmp/zlib/adler32.c", get_zlib_checks),
+    ]
+    
+    output_dir = os.path.join(os.path.dirname(__file__), '..', 'public')
     manifest_path = os.path.join(output_dir, 'manifest.json')
-    if os.path.exists(manifest_path):
-        with open(manifest_path) as f:
-            projects = json.load(f)
-    else:
-        projects = []
     
-    # Update or add this project
-    projects = [p for p in projects if p["slug"] != project_slug]
-    projects.append(project_result)
+    final_projects = []
     
+    for slug, name, version, lang, source, checks_fn in registry:
+        res = run_project_checks(slug, name, version, lang, source, checks_fn)
+        if res:
+            final_projects.append(res)
+            
+    # Write manifest
     with open(manifest_path, 'w') as f:
-        json.dump(projects, f, indent=2)
-    
-    # Generate the summary dashboard
+        json.dump(final_projects, f, indent=2)
+        
+    # Generate dashboard
     dashboard_path = os.path.join(output_dir, 'results.html')
-    dashboard_html = generate_dashboard(projects)
+    dashboard_html = generate_dashboard(final_projects)
     with open(dashboard_path, 'w') as f:
         f.write(dashboard_html)
     print(f"Dashboard written to {dashboard_path}")
     
-    if failed:
-        print(f"\n⚠️  {failed} constraint(s) FAILED — potential vulnerabilities found!")
+    total_failed = sum(p["failed"] for p in final_projects)
+    if total_failed:
+        print(f"\n⚠️  {total_failed} constraint(s) FAILED overall — potential vulnerabilities found!")
     else:
-        print(f"\n✅ All {total} constraints VERIFIED")
+        print(f"\n✅ All projects VERIFIED")
 
 if __name__ == "__main__":
     main()

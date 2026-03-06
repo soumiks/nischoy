@@ -23,9 +23,12 @@ class SMTConverter:
         for op in ast.get('operations', []):
             if op['op'] == 'check_bound':
                 var_sym = self.vars[op['variable']]
-                max_val = op['max_val']
-                self.solver.add(var_sym <= max_val)
-                self.solver.add(var_sym >= 0)
+                if 'max_val' in op:
+                    self.solver.add(var_sym <= op['max_val'])
+                if 'min_val' in op:
+                    self.solver.add(var_sym >= op['min_val'])
+                else:
+                    self.solver.add(var_sym >= 0)
 
             elif op['op'] == 'assign':
                 target_name = op['target']
