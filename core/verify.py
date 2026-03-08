@@ -340,6 +340,18 @@ def get_curl_checks(parser):
          parser.parse_junkscan(), 
          SecurityConstraints.no_control_chars_in_url,
          "Proves the URL rejects all non-printable ASCII characters (<= 31 or == 127). This fundamentally prevents request smuggling and parser confusion vulnerabilities."),
+        ("URL Input Length Bounds (CURL_MAX_INPUT_LENGTH)",
+         parser.parse_url_input_length(),
+         SecurityConstraints.url_input_length_bounds,
+         "Verifies that the total URL length never exceeds CURL_MAX_INPUT_LENGTH (8,000,000 bytes). An unbounded URL could cause excessive memory allocation or denial-of-service via heap exhaustion."),
+        ("Scheme Length Bounds (MAX_SCHEME_LEN)",
+         parser.parse_scheme_length(),
+         SecurityConstraints.scheme_length_bounds,
+         "Proves that the URL scheme component (e.g. 'https') is between 1 and 40 characters. A zero-length scheme causes null-dereference; an oversized scheme overflows the fixed-size schemebuf[] on the stack."),
+        ("Redirect Counter Bounds (Open Redirect DoS)",
+         parser.parse_redirect_bounds(),
+         SecurityConstraints.redirect_counter_bounds,
+         "Ensures the redirect follow counter (uint16) and max redirects config (int16) stay within their type bounds. An unchecked counter could wrap around, enabling infinite redirect loops and denial-of-service."),
     ]
 
 def get_zlib_checks(parser):

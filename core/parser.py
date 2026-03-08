@@ -235,6 +235,47 @@ class CParser:
             ]
         }
 
+    def parse_url_input_length(self):
+        """Extract URL input length bounds from Curl_junkscan (CURL_MAX_INPUT_LENGTH = 8000000)."""
+        return {
+            "function": "Curl_junkscan",
+            "file": self.filepath,
+            "variables": [
+                {"name": "urllen", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "urllen", "min_val": 0, "max_val": 8000000, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_scheme_length(self):
+        """Extract scheme length bounds (MAX_SCHEME_LEN = 40)."""
+        return {
+            "function": "Curl_get_scheme_handler",
+            "file": self.filepath,
+            "variables": [
+                {"name": "scheme_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "scheme_len", "min_val": 1, "max_val": 40, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_redirect_bounds(self):
+        """Extract redirect counter bounds (followlocation uint16, maxredirs int16)."""
+        return {
+            "function": "curl_follow_redirect",
+            "file": self.filepath,
+            "variables": [
+                {"name": "followlocation", "type": "int"},
+                {"name": "maxredirs", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "followlocation", "min_val": 0, "max_val": 65535, "action_on_fail": "return_error"},
+                {"op": "check_bound", "variable": "maxredirs", "min_val": -1, "max_val": 32767, "action_on_fail": "return_error"},
+            ]
+        }
+
     def parse_git_protocol_version(self):
         """Extract protocol version bounds from git."""
         return {

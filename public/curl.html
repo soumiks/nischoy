@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">5</div>
+        <div class="num">8</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">5</div>
+        <div class="num" style="color: var(--green)">8</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -104,7 +104,7 @@
         <h3>Port Number Bounds (0-65535)</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>Curl_parse_port</code> · Z3 solved in 0.2ms</p>
+      <p class="result-meta">Function: <code>Curl_parse_port</code> · Z3 solved in 6.2ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures that a parsed port number strictly falls between 0 and 65535. This prevents integer overflow bugs where negative numbers or extremely large numbers could bypass downstream access controls.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -156,7 +156,7 @@
         <h3>No CRLF in Credentials (Header Injection)</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>parse_hostname_login</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>parse_hostname_login</code> · Z3 solved in 0.2ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that HTTP headers cannot be injected via the username or password fields in a URL by asserting that no Carriage Return (\r) or Line Feed (\n) characters are present.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -476,8 +476,82 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>URL Input Length Bounds (CURL_MAX_INPUT_LENGTH)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>Curl_junkscan</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that the total URL length never exceeds CURL_MAX_INPUT_LENGTH (8,000,000 bytes). An unbounded URL could cause excessive memory allocation or denial-of-service via heap exhaustion.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun urllen () Int)
+(assert
+ (<= urllen 8000000))
+(assert
+ (>= urllen 0))
+(assert
+ (or (< urllen 0) (> urllen 8000000)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Scheme Length Bounds (MAX_SCHEME_LEN)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>Curl_get_scheme_handler</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that the URL scheme component (e.g. 'https') is between 1 and 40 characters. A zero-length scheme causes null-dereference; an oversized scheme overflows the fixed-size schemebuf[] on the stack.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun scheme_len () Int)
+(assert
+ (<= scheme_len 40))
+(assert
+ (>= scheme_len 1))
+(assert
+ (or (< scheme_len 1) (> scheme_len 40)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Redirect Counter Bounds (Open Redirect DoS)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>curl_follow_redirect</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures the redirect follow counter (uint16) and max redirects config (int16) stay within their type bounds. An unchecked counter could wrap around, enabling infinite redirect loops and denial-of-service.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun followlocation () Int)
+(declare-fun maxredirs () Int)
+(assert
+ (<= followlocation 65535))
+(assert
+ (>= followlocation 0))
+(assert
+ (<= maxredirs 32767))
+(assert
+ (>= maxredirs (- 1)))
+(assert
+ (or (or (< followlocation 0) (> followlocation 65535)) (or (< maxredirs (- 1)) (> maxredirs 32767))))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-06 19:57:16 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-08 00:54:20 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

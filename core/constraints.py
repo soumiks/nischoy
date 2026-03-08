@@ -153,6 +153,36 @@ class SecurityConstraints:
         return z3.Or(uid < 0, uid > 65534)
 
     @staticmethod
+    def url_input_length_bounds(vars_dict):
+        """URL length must be between 0 and CURL_MAX_INPUT_LENGTH (8000000)."""
+        urllen = vars_dict.get('urllen')
+        if urllen is None:
+            return None
+        return z3.Or(urllen < 0, urllen > 8000000)
+
+    @staticmethod
+    def scheme_length_bounds(vars_dict):
+        """Scheme length must be between 1 and MAX_SCHEME_LEN (40)."""
+        scheme_len = vars_dict.get('scheme_len')
+        if scheme_len is None:
+            return None
+        return z3.Or(scheme_len < 1, scheme_len > 40)
+
+    @staticmethod
+    def redirect_counter_bounds(vars_dict):
+        """Redirect counter must be within uint16 range; maxredirs within int16 range."""
+        violations = []
+        fl = vars_dict.get('followlocation')
+        if fl is not None:
+            violations.append(z3.Or(fl < 0, fl > 65535))
+        mr = vars_dict.get('maxredirs')
+        if mr is not None:
+            violations.append(z3.Or(mr < -1, mr > 32767))
+        if not violations:
+            return None
+        return z3.Or(*violations)
+
+    @staticmethod
     def git_protocol_version_bounds(vars_dict):
         """Git protocol version must be 0, 1, or 2."""
         version = vars_dict.get('version')
