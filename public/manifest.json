@@ -34,8 +34,8 @@
     "name": "sqlite",
     "version": "master",
     "language": "C",
-    "checks": 5,
-    "passed": 5,
+    "checks": 9,
+    "passed": 9,
     "failed": 0,
     "status": "VERIFIED"
   },

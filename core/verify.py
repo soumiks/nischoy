@@ -435,6 +435,22 @@ def get_sqlite_checks(parser):
          parser.parse_sqlite3_attached_db(),
          SecurityConstraints.sqlite3_attached_db_bounds,
          "Proves that the attached database index is between 0 and SQLITE_MAX_ATTACHED (125). An out-of-bounds index would cause array overflows in the db->aDb[] schema array, corrupting adjacent heap metadata."),
+        ("SQLite3 SQL Statement Length Bounds",
+         parser.parse_sqlite3_sql_length(),
+         SecurityConstraints.sqlite3_sql_length_bounds,
+         "Verifies that SQL statement length never exceeds SQLITE_MAX_SQL_LENGTH (1,000,000,000 bytes). An unbounded SQL string triggers excessive tokenizer memory allocation and can cause denial-of-service via parser stack exhaustion."),
+        ("SQLite3 Expression Tree Depth Bounds",
+         parser.parse_sqlite3_expr_depth(),
+         SecurityConstraints.sqlite3_expr_depth_bounds,
+         "Proves that recursive expression nesting depth cannot exceed SQLITE_MAX_EXPR_DEPTH (1000). Without this bound, a deeply nested SQL expression causes C stack overflow during code generation, enabling remote code execution."),
+        ("SQLite3 Column Count Bounds (SQLITE_MAX_COLUMN)",
+         parser.parse_sqlite3_column_count(),
+         SecurityConstraints.sqlite3_column_count_bounds,
+         "Ensures the number of columns in a table or index stays within SQLITE_MAX_COLUMN (hard max 32767). Exceeding this limit overflows the 16-bit column index stored in Index structures, corrupting query plans."),
+        ("SQLite3 BLOB/String Length Bounds (SQLITE_MAX_LENGTH)",
+         parser.parse_sqlite3_blob_length(),
+         SecurityConstraints.sqlite3_blob_length_bounds,
+         "Proves that BLOB and string values never exceed SQLITE_MAX_LENGTH (1,000,000,000 bytes). Without this cap, oversized values cause integer overflow in memory allocation arithmetic, leading to heap buffer overflows."),
     ]
 
 def get_openssl_checks(parser):

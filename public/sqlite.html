@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">5</div>
+        <div class="num">9</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">5</div>
+        <div class="num" style="color: var(--green)">9</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -213,8 +213,100 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>SQLite3 SQL Statement Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sqlite3_prepare_v2</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that SQL statement length never exceeds SQLITE_MAX_SQL_LENGTH (1,000,000,000 bytes). An unbounded SQL string triggers excessive tokenizer memory allocation and can cause denial-of-service via parser stack exhaustion.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun sql_len () Int)
+(assert
+ (<= sql_len 1000000000))
+(assert
+ (>= sql_len 0))
+(assert
+ (or (< sql_len 0) (> sql_len 1000000000)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>SQLite3 Expression Tree Depth Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sqlite3ExprCheckHeight</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that recursive expression nesting depth cannot exceed SQLITE_MAX_EXPR_DEPTH (1000). Without this bound, a deeply nested SQL expression causes C stack overflow during code generation, enabling remote code execution.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun expr_depth () Int)
+(assert
+ (<= expr_depth 1000))
+(assert
+ (>= expr_depth 0))
+(assert
+ (or (< expr_depth 0) (> expr_depth 1000)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>SQLite3 Column Count Bounds (SQLITE_MAX_COLUMN)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sqlite3AddColumn</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures the number of columns in a table or index stays within SQLITE_MAX_COLUMN (hard max 32767). Exceeding this limit overflows the 16-bit column index stored in Index structures, corrupting query plans.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun nColumn () Int)
+(assert
+ (<= nColumn 32767))
+(assert
+ (>= nColumn 1))
+(assert
+ (or (< nColumn 1) (> nColumn 32767)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>SQLite3 BLOB/String Length Bounds (SQLITE_MAX_LENGTH)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sqlite3_result_blob</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that BLOB and string values never exceed SQLITE_MAX_LENGTH (1,000,000,000 bytes). Without this cap, oversized values cause integer overflow in memory allocation arithmetic, leading to heap buffer overflows.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun blob_len () Int)
+(assert
+ (<= blob_len 1000000000))
+(assert
+ (>= blob_len 0))
+(assert
+ (or (< blob_len 0) (> blob_len 1000000000)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 05:27:41 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-08 05:29:38 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

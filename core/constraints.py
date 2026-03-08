@@ -185,12 +185,11 @@ class SecurityConstraints:
 
     @staticmethod
     def sqlite3_page_size_bounds(vars_dict):
-        """pageSize must be 512..65536 and a power of two."""
+        """pageSize must be 512..65536 (SQLITE_MAX_PAGE_SIZE)."""
         ps = vars_dict.get('pageSize')
         if ps is None:
             return None
-        valid_sizes = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
-        return z3.Not(z3.Or(*[ps == v for v in valid_sizes]))
+        return z3.Or(ps < 512, ps > 65536)
 
     @staticmethod
     def sqlite3_sql_length_bounds(vars_dict):
@@ -218,11 +217,11 @@ class SecurityConstraints:
 
     @staticmethod
     def sqlite3_attached_db_bounds(vars_dict):
-        """Number of attached databases must be 0..SQLITE_MAX_ATTACHED (max 125)."""
-        nDb = vars_dict.get('nDb')
-        if nDb is None:
+        """Attached database index must be between 0 and SQLITE_MAX_ATTACHED (125)."""
+        iDb = vars_dict.get('iDb')
+        if iDb is None:
             return None
-        return z3.Or(nDb < 0, nDb > 125)
+        return z3.Or(iDb < 0, iDb > 125)
 
     @staticmethod
     def sqlite3_blob_length_bounds(vars_dict):
@@ -231,14 +230,6 @@ class SecurityConstraints:
         if blob_len is None:
             return None
         return z3.Or(blob_len < 0, blob_len > 1000000000)
-
-    @staticmethod
-    def sqlite3_page_size_bounds(vars_dict):
-        """Page size must be between 512 and 65536 (SQLITE_MAX_PAGE_SIZE)."""
-        pageSize = vars_dict.get('pageSize')
-        if pageSize is None:
-            return None
-        return z3.Or(pageSize < 512, pageSize > 65536)
 
     @staticmethod
     def sqlite3_function_narg_bounds(vars_dict):
@@ -255,14 +246,6 @@ class SecurityConstraints:
         if mxMmap is None:
             return None
         return mxMmap < 0
-
-    @staticmethod
-    def sqlite3_attached_db_bounds(vars_dict):
-        """Attached database index must be between 0 and SQLITE_MAX_ATTACHED (125)."""
-        iDb = vars_dict.get('iDb')
-        if iDb is None:
-            return None
-        return z3.Or(iDb < 0, iDb > 125)
 
     @staticmethod
     def dsa_sig_len_bounds(vars_dict):

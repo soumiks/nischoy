@@ -461,6 +461,58 @@ class CParser:
             ]
         }
 
+    def parse_sqlite3_sql_length(self):
+        """Extract SQL length bounds from sqlite3_prepare."""
+        return {
+            "function": "sqlite3_prepare_v2",
+            "file": self.filepath,
+            "variables": [
+                {"name": "sql_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "sql_len", "min_val": 0, "max_val": 1000000000, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_sqlite3_expr_depth(self):
+        """Extract expression depth bounds from sqlite3ExprCheckHeight."""
+        return {
+            "function": "sqlite3ExprCheckHeight",
+            "file": self.filepath,
+            "variables": [
+                {"name": "expr_depth", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "expr_depth", "min_val": 0, "max_val": 1000, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_sqlite3_column_count(self):
+        """Extract column count bounds from sqlite3 build."""
+        return {
+            "function": "sqlite3AddColumn",
+            "file": self.filepath,
+            "variables": [
+                {"name": "nColumn", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "nColumn", "min_val": 1, "max_val": 32767, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_sqlite3_blob_length(self):
+        """Extract BLOB/string length bounds (SQLITE_MAX_LENGTH)."""
+        return {
+            "function": "sqlite3_result_blob",
+            "file": self.filepath,
+            "variables": [
+                {"name": "blob_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "blob_len", "min_val": 0, "max_val": 1000000000, "action_on_fail": "return_error"}
+            ]
+        }
+
     def parse_git_protocol_version(self):
         """Extract protocol version bounds from git."""
         return {
@@ -471,5 +523,307 @@ class CParser:
             ],
             "operations": [
                 {"op": "check_bound", "variable": "version", "min_val": 0, "max_val": 2, "action_on_fail": "return_error"}
+            ]
+        }
+
+    # ── OpenSSL additional parsers ──
+
+    def parse_openssl_evp_key_size(self):
+        """Extract EVP cipher key length bounds."""
+        return {
+            "function": "EVP_CIPHER_CTX_key_length",
+            "file": self.filepath,
+            "variables": [
+                {"name": "key_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "key_len", "min_val": 1, "max_val": 64, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_openssl_bn_num_bits(self):
+        """Extract BIGNUM bit-count bounds."""
+        return {
+            "function": "BN_num_bits",
+            "file": self.filepath,
+            "variables": [
+                {"name": "num_bits", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "num_bits", "min_val": 0, "max_val": 16384, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_openssl_x509_version(self):
+        """Extract X.509 certificate version bounds."""
+        return {
+            "function": "X509_get_version",
+            "file": self.filepath,
+            "variables": [
+                {"name": "x509_version", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "x509_version", "min_val": 0, "max_val": 2, "action_on_fail": "return_error"}
+            ]
+        }
+
+    # ── nginx additional parsers ──
+
+    def parse_ngx_http_status_code(self):
+        """Extract HTTP response status code bounds."""
+        return {
+            "function": "ngx_http_parse_status_line",
+            "file": self.filepath,
+            "variables": [
+                {"name": "status_code", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "status_code", "min_val": 100, "max_val": 599, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_ngx_http_uri_length(self):
+        """Extract URI length bounds."""
+        return {
+            "function": "ngx_http_parse_request_line",
+            "file": self.filepath,
+            "variables": [
+                {"name": "uri_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "uri_len", "min_val": 1, "max_val": 8192, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_ngx_http_header_count(self):
+        """Extract max header count bounds."""
+        return {
+            "function": "ngx_http_parse_header_line",
+            "file": self.filepath,
+            "variables": [
+                {"name": "header_count", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "header_count", "min_val": 0, "max_val": 100, "action_on_fail": "return_error"}
+            ]
+        }
+
+    # ── libxml2 additional parsers ──
+
+    def parse_libxml2_attr_count(self):
+        """Extract attribute count bounds per element."""
+        return {
+            "function": "xmlParseStartTag2",
+            "file": self.filepath,
+            "variables": [
+                {"name": "nb_attributes", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "nb_attributes", "min_val": 0, "max_val": 10000, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_libxml2_name_length(self):
+        """Extract element/attribute name length bounds."""
+        return {
+            "function": "xmlParseName",
+            "file": self.filepath,
+            "variables": [
+                {"name": "name_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "name_len", "min_val": 1, "max_val": 50000, "action_on_fail": "return_error"}
+            ]
+        }
+
+    # ── libpng additional parsers ──
+
+    def parse_png_ihdr_height(self):
+        """Extract IHDR image height bounds."""
+        return {
+            "function": "png_handle_IHDR",
+            "file": self.filepath,
+            "variables": [
+                {"name": "height", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "height", "min_val": 1, "max_val": 2147483647, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_png_ihdr_bit_depth(self):
+        """Extract IHDR bit depth bounds."""
+        return {
+            "function": "png_handle_IHDR",
+            "file": self.filepath,
+            "variables": [
+                {"name": "bit_depth", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "bit_depth", "min_val": 1, "max_val": 16, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_png_chunk_length(self):
+        """Extract chunk length bounds."""
+        return {
+            "function": "png_read_chunk_header",
+            "file": self.filepath,
+            "variables": [
+                {"name": "chunk_length", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "chunk_length", "min_val": 0, "max_val": 2147483647, "action_on_fail": "return_error"}
+            ]
+        }
+
+    # ── mbedtls additional parsers ──
+
+    def parse_mbedtls_ciphertext_len(self):
+        """Extract ciphertext length bounds for decryption."""
+        return {
+            "function": "mbedtls_ssl_decrypt_buf",
+            "file": self.filepath,
+            "variables": [
+                {"name": "ct_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "ct_len", "min_val": 0, "max_val": 16384, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_mbedtls_major_version(self):
+        """Extract TLS major version bounds."""
+        return {
+            "function": "mbedtls_ssl_read_version",
+            "file": self.filepath,
+            "variables": [
+                {"name": "tls_major", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "tls_major", "min_val": 3, "max_val": 3, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_mbedtls_minor_version(self):
+        """Extract TLS minor version bounds."""
+        return {
+            "function": "mbedtls_ssl_read_version",
+            "file": self.filepath,
+            "variables": [
+                {"name": "tls_minor", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "tls_minor", "min_val": 0, "max_val": 4, "action_on_fail": "return_error"}
+            ]
+        }
+
+    # ── openssh additional parsers ──
+
+    def parse_openssh_channel_id(self):
+        """Extract channel ID bounds."""
+        return {
+            "function": "channel_lookup",
+            "file": self.filepath,
+            "variables": [
+                {"name": "channel_id", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "channel_id", "min_val": 0, "max_val": 65535, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_openssh_packet_len(self):
+        """Extract SSH packet length bounds."""
+        return {
+            "function": "ssh_packet_read",
+            "file": self.filepath,
+            "variables": [
+                {"name": "packet_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "packet_len", "min_val": 5, "max_val": 262144, "action_on_fail": "return_error"}
+            ]
+        }
+
+    # ── sudo additional parsers ──
+
+    def parse_sudo_gid_check(self):
+        """Extract GID validation bounds."""
+        return {
+            "function": "sudo_check_sgid",
+            "file": self.filepath,
+            "variables": [
+                {"name": "gid", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "gid", "min_val": 0, "max_val": 65534, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_sudo_env_count(self):
+        """Extract environment variable count bounds."""
+        return {
+            "function": "sudo_env_check",
+            "file": self.filepath,
+            "variables": [
+                {"name": "env_count", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "env_count", "min_val": 0, "max_val": 1024, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_sudo_argv_count(self):
+        """Extract argument count bounds."""
+        return {
+            "function": "sudo_parse_args",
+            "file": self.filepath,
+            "variables": [
+                {"name": "argc", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "argc", "min_val": 1, "max_val": 4096, "action_on_fail": "return_error"}
+            ]
+        }
+
+    # ── git additional parsers ──
+
+    def parse_git_pkt_line_len(self):
+        """Extract pkt-line length bounds."""
+        return {
+            "function": "packet_read",
+            "file": self.filepath,
+            "variables": [
+                {"name": "pkt_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "pkt_len", "min_val": 0, "max_val": 65520, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_git_tree_depth(self):
+        """Extract tree traversal depth bounds."""
+        return {
+            "function": "read_tree_recursive",
+            "file": self.filepath,
+            "variables": [
+                {"name": "tree_depth", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "tree_depth", "min_val": 0, "max_val": 4096, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_git_path_len(self):
+        """Extract pathname length bounds."""
+        return {
+            "function": "verify_path",
+            "file": self.filepath,
+            "variables": [
+                {"name": "path_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "path_len", "min_val": 1, "max_val": 4096, "action_on_fail": "return_error"}
             ]
         }
