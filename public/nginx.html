@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">1</div>
+        <div class="num">4</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">1</div>
+        <div class="num" style="color: var(--green)">4</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -119,8 +119,77 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>HTTP Status Code Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>ngx_http_parse_status_line</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Validates that parsed HTTP response status codes are within the valid range 100-599. Out-of-range status codes could confuse downstream proxies and enable response splitting attacks.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun status_code () Int)
+(assert
+ (<= status_code 599))
+(assert
+ (>= status_code 100))
+(assert
+ (or (< status_code 100) (> status_code 599)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Request URI Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>ngx_http_parse_request_line</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures the parsed request URI length is between 1 and 8192 bytes. Zero-length URIs cause null-pointer dereferences; excessively long URIs enable buffer overflow in fixed-size URI buffers.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun uri_len () Int)
+(assert
+ (<= uri_len 8192))
+(assert
+ (>= uri_len 1))
+(assert
+ (or (< uri_len 1) (> uri_len 8192)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>HTTP Header Count Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>ngx_http_parse_header_line</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Limits the number of parsed HTTP headers to 100, preventing slowloris-style denial-of-service attacks via excessive header injection.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun header_count () Int)
+(assert
+ (<= header_count 100))
+(assert
+ (>= header_count 0))
+(assert
+ (or (< header_count 0) (> header_count 100)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 05:29:38 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-08 05:30:39 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

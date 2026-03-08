@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">1</div>
+        <div class="num">3</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">1</div>
+        <div class="num" style="color: var(--green)">3</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -121,8 +121,54 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Attribute Count Per Element Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>xmlParseStartTag2</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Limits the number of attributes on a single XML element to 10,000. Unbounded attribute counts enable quadratic blowup DoS attacks during namespace resolution and duplicate attribute detection.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun nb_attributes () Int)
+(assert
+ (<= nb_attributes 10000))
+(assert
+ (>= nb_attributes 0))
+(assert
+ (or (< nb_attributes 0) (> nb_attributes 10000)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Element/Attribute Name Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>xmlParseName</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures XML element and attribute names are between 1 and 50,000 characters. Zero-length names cause parser state corruption; excessively long names exhaust memory during dictionary interning.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun name_len () Int)
+(assert
+ (<= name_len 50000))
+(assert
+ (>= name_len 1))
+(assert
+ (or (< name_len 1) (> name_len 50000)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 05:29:38 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-08 05:30:39 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

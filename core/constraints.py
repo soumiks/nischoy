@@ -340,3 +340,195 @@ class SecurityConstraints:
         if version is None:
             return None
         return z3.Or(version < 0, version > 2)
+
+    # ── OpenSSL additional constraints ──
+
+    @staticmethod
+    def openssl_evp_key_size_bounds(vars_dict):
+        """EVP cipher key length must be 1-64 bytes."""
+        key_len = vars_dict.get('key_len')
+        if key_len is None:
+            return None
+        return z3.Or(key_len < 1, key_len > 64)
+
+    @staticmethod
+    def openssl_bn_num_bits_bounds(vars_dict):
+        """BIGNUM bit count must be 0-16384."""
+        num_bits = vars_dict.get('num_bits')
+        if num_bits is None:
+            return None
+        return z3.Or(num_bits < 0, num_bits > 16384)
+
+    @staticmethod
+    def openssl_x509_version_bounds(vars_dict):
+        """X.509 version must be 0 (v1), 1 (v2), or 2 (v3)."""
+        v = vars_dict.get('x509_version')
+        if v is None:
+            return None
+        return z3.Or(v < 0, v > 2)
+
+    # ── nginx additional constraints ──
+
+    @staticmethod
+    def nginx_status_code_bounds(vars_dict):
+        """HTTP status code must be 100-599."""
+        sc = vars_dict.get('status_code')
+        if sc is None:
+            return None
+        return z3.Or(sc < 100, sc > 599)
+
+    @staticmethod
+    def nginx_uri_length_bounds(vars_dict):
+        """URI length must be 1-8192."""
+        ul = vars_dict.get('uri_len')
+        if ul is None:
+            return None
+        return z3.Or(ul < 1, ul > 8192)
+
+    @staticmethod
+    def nginx_header_count_bounds(vars_dict):
+        """Header count must be 0-100."""
+        hc = vars_dict.get('header_count')
+        if hc is None:
+            return None
+        return z3.Or(hc < 0, hc > 100)
+
+    # ── libxml2 additional constraints ──
+
+    @staticmethod
+    def libxml2_attr_count_bounds(vars_dict):
+        """Attribute count per element must be 0-10000."""
+        nb = vars_dict.get('nb_attributes')
+        if nb is None:
+            return None
+        return z3.Or(nb < 0, nb > 10000)
+
+    @staticmethod
+    def libxml2_name_length_bounds(vars_dict):
+        """Element/attribute name length must be 1-50000."""
+        nl = vars_dict.get('name_len')
+        if nl is None:
+            return None
+        return z3.Or(nl < 1, nl > 50000)
+
+    # ── libpng additional constraints ──
+
+    @staticmethod
+    def png_height_bounds(vars_dict):
+        """PNG IHDR height must be positive and within INT_MAX."""
+        h = vars_dict.get('height')
+        if h is None:
+            return None
+        return z3.Or(h < 1, h > 2147483647)
+
+    @staticmethod
+    def png_bit_depth_bounds(vars_dict):
+        """PNG bit depth must be 1-16."""
+        bd = vars_dict.get('bit_depth')
+        if bd is None:
+            return None
+        return z3.Or(bd < 1, bd > 16)
+
+    @staticmethod
+    def png_chunk_length_bounds(vars_dict):
+        """PNG chunk length must be non-negative and within INT_MAX."""
+        cl = vars_dict.get('chunk_length')
+        if cl is None:
+            return None
+        return z3.Or(cl < 0, cl > 2147483647)
+
+    # ── mbedtls additional constraints ──
+
+    @staticmethod
+    def mbedtls_ciphertext_len_bounds(vars_dict):
+        """Ciphertext length must be 0-16384."""
+        ct = vars_dict.get('ct_len')
+        if ct is None:
+            return None
+        return z3.Or(ct < 0, ct > 16384)
+
+    @staticmethod
+    def mbedtls_major_version_bounds(vars_dict):
+        """TLS major version must be exactly 3."""
+        mv = vars_dict.get('tls_major')
+        if mv is None:
+            return None
+        return z3.Or(mv < 3, mv > 3)
+
+    @staticmethod
+    def mbedtls_minor_version_bounds(vars_dict):
+        """TLS minor version must be 0-4."""
+        mv = vars_dict.get('tls_minor')
+        if mv is None:
+            return None
+        return z3.Or(mv < 0, mv > 4)
+
+    # ── openssh additional constraints ──
+
+    @staticmethod
+    def openssh_channel_id_bounds(vars_dict):
+        """Channel ID must be 0-65535."""
+        cid = vars_dict.get('channel_id')
+        if cid is None:
+            return None
+        return z3.Or(cid < 0, cid > 65535)
+
+    @staticmethod
+    def openssh_packet_len_bounds(vars_dict):
+        """SSH packet length must be 5-262144."""
+        pl = vars_dict.get('packet_len')
+        if pl is None:
+            return None
+        return z3.Or(pl < 5, pl > 262144)
+
+    # ── sudo additional constraints ──
+
+    @staticmethod
+    def sudo_gid_bounds(vars_dict):
+        """GID must be 0-65534."""
+        gid = vars_dict.get('gid')
+        if gid is None:
+            return None
+        return z3.Or(gid < 0, gid > 65534)
+
+    @staticmethod
+    def sudo_env_count_bounds(vars_dict):
+        """Environment variable count must be 0-1024."""
+        ec = vars_dict.get('env_count')
+        if ec is None:
+            return None
+        return z3.Or(ec < 0, ec > 1024)
+
+    @staticmethod
+    def sudo_argv_count_bounds(vars_dict):
+        """Argument count must be 1-4096."""
+        ac = vars_dict.get('argc')
+        if ac is None:
+            return None
+        return z3.Or(ac < 1, ac > 4096)
+
+    # ── git additional constraints ──
+
+    @staticmethod
+    def git_pkt_line_len_bounds(vars_dict):
+        """pkt-line length must be 0-65520."""
+        pl = vars_dict.get('pkt_len')
+        if pl is None:
+            return None
+        return z3.Or(pl < 0, pl > 65520)
+
+    @staticmethod
+    def git_tree_depth_bounds(vars_dict):
+        """Tree traversal depth must be 0-4096."""
+        td = vars_dict.get('tree_depth')
+        if td is None:
+            return None
+        return z3.Or(td < 0, td > 4096)
+
+    @staticmethod
+    def git_path_len_bounds(vars_dict):
+        """Pathname length must be 1-4096."""
+        pl = vars_dict.get('path_len')
+        if pl is None:
+            return None
+        return z3.Or(pl < 1, pl > 4096)

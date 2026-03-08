@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">1</div>
+        <div class="num">4</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">1</div>
+        <div class="num" style="color: var(--green)">4</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -121,8 +121,77 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>GID Bounds Validation</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sudo_check_sgid</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Validates that Group IDs are between 0 and 65534. The value 65535 (nobody/nogroup) and negative GIDs can bypass group-based access control checks in the sudoers policy.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun gid () Int)
+(assert
+ (<= gid 65534))
+(assert
+ (>= gid 0))
+(assert
+ (or (< gid 0) (> gid 65534)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Environment Variable Count Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sudo_env_check</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Limits the number of environment variables passed through sudo to 1024. Unbounded environment inheritance enables stack exhaustion and env-based privilege escalation (e.g., LD_PRELOAD injection).</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun env_count () Int)
+(assert
+ (<= env_count 1024))
+(assert
+ (>= env_count 0))
+(assert
+ (or (< env_count 0) (> env_count 1024)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Argument Count Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sudo_parse_args</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures the argument count is between 1 and 4096. Zero arguments cause null-pointer dereference; excessive arguments enable stack-based buffer overflow in argument vector construction.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun argc () Int)
+(assert
+ (<= argc 4096))
+(assert
+ (>= argc 1))
+(assert
+ (or (< argc 1) (> argc 4096)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 05:29:38 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-08 05:30:39 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

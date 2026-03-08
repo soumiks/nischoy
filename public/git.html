@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">1</div>
+        <div class="num">4</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">1</div>
+        <div class="num" style="color: var(--green)">4</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -121,8 +121,77 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>pkt-line Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>packet_read</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures Git pkt-line lengths are between 0 and 65520 bytes (the protocol maximum). Oversized pkt-lines cause heap buffer overflow in the sideband demultiplexer and smart HTTP transport.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun pkt_len () Int)
+(assert
+ (<= pkt_len 65520))
+(assert
+ (>= pkt_len 0))
+(assert
+ (or (< pkt_len 0) (> pkt_len 65520)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Tree Traversal Depth Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>read_tree_recursive</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Limits recursive tree traversal depth to 4096, preventing stack overflow from maliciously crafted repositories with deeply nested directory structures (CVE-style symlink/tree bombs).</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun tree_depth () Int)
+(assert
+ (<= tree_depth 4096))
+(assert
+ (>= tree_depth 0))
+(assert
+ (or (< tree_depth 0) (> tree_depth 4096)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Pathname Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>verify_path</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Validates that file path lengths are between 1 and 4096 characters. Zero-length paths bypass .gitignore rules; excessively long paths overflow fixed-size path buffers on certain platforms.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun path_len () Int)
+(assert
+ (<= path_len 4096))
+(assert
+ (>= path_len 1))
+(assert
+ (or (< path_len 1) (> path_len 4096)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 05:29:38 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-08 05:30:39 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

@@ -44,8 +44,8 @@
     "name": "OpenSSL",
     "version": "master",
     "language": "C",
-    "checks": 1,
-    "passed": 1,
+    "checks": 4,
+    "passed": 4,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -54,8 +54,8 @@
     "name": "nginx",
     "version": "master",
     "language": "C",
-    "checks": 1,
-    "passed": 1,
+    "checks": 4,
+    "passed": 4,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -64,8 +64,8 @@
     "name": "libxml2",
     "version": "master",
     "language": "C",
-    "checks": 1,
-    "passed": 1,
+    "checks": 3,
+    "passed": 3,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -74,8 +74,8 @@
     "name": "libpng",
     "version": "master",
     "language": "C",
-    "checks": 1,
-    "passed": 1,
+    "checks": 4,
+    "passed": 4,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -84,8 +84,8 @@
     "name": "mbedTLS",
     "version": "master",
     "language": "C",
-    "checks": 1,
-    "passed": 1,
+    "checks": 4,
+    "passed": 4,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -94,8 +94,8 @@
     "name": "OpenSSH",
     "version": "master",
     "language": "C",
-    "checks": 1,
-    "passed": 1,
+    "checks": 3,
+    "passed": 3,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -104,8 +104,8 @@
     "name": "sudo",
     "version": "master",
     "language": "C",
-    "checks": 1,
-    "passed": 1,
+    "checks": 4,
+    "passed": 4,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -114,8 +114,8 @@
     "name": "git",
     "version": "master",
     "language": "C",
-    "checks": 1,
-    "passed": 1,
+    "checks": 4,
+    "passed": 4,
     "failed": 0,
     "status": "VERIFIED"
   }

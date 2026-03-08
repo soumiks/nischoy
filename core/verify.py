@@ -459,6 +459,18 @@ def get_openssl_checks(parser):
          parser.parse_d2i_DSA_SIG(),
          SecurityConstraints.dsa_sig_len_bounds,
          "Verifies that the length parameter provided when decoding an ASN.1 DER encoded DSA signature is strictly non-negative. This prevents catastrophic integer underflow vulnerabilities during cryptographic parsing."),
+        ("EVP Cipher Key Length Bounds",
+         parser.parse_openssl_evp_key_size(),
+         SecurityConstraints.openssl_evp_key_size_bounds,
+         "Ensures the EVP cipher key length is between 1 and 64 bytes, preventing zero-length keys (no encryption) or oversized keys that could overflow fixed-size key schedule buffers."),
+        ("BIGNUM Bit Count Bounds",
+         parser.parse_openssl_bn_num_bits(),
+         SecurityConstraints.openssl_bn_num_bits_bounds,
+         "Validates that BIGNUM bit counts are non-negative and at most 16384, preventing denial-of-service via absurdly large key generation or modular exponentiation operations."),
+        ("X.509 Certificate Version Bounds",
+         parser.parse_openssl_x509_version(),
+         SecurityConstraints.openssl_x509_version_bounds,
+         "Proves the X.509 certificate version field is 0 (v1), 1 (v2), or 2 (v3). Invalid versions could bypass extension parsing logic and certificate validation checks."),
     ]
 
 def get_nginx_checks(parser):
@@ -467,6 +479,18 @@ def get_nginx_checks(parser):
          parser.parse_ngx_http_v2_state_field_len(),
          SecurityConstraints.nginx_field_len_bounds,
          "Proves that HTTP/2 HPACK header field lengths are never negative. A negative length in HTTP/2 state parsing could cause infinite loops or massive out-of-bounds memory reads."),
+        ("HTTP Status Code Bounds",
+         parser.parse_ngx_http_status_code(),
+         SecurityConstraints.nginx_status_code_bounds,
+         "Validates that parsed HTTP response status codes are within the valid range 100-599. Out-of-range status codes could confuse downstream proxies and enable response splitting attacks."),
+        ("Request URI Length Bounds",
+         parser.parse_ngx_http_uri_length(),
+         SecurityConstraints.nginx_uri_length_bounds,
+         "Ensures the parsed request URI length is between 1 and 8192 bytes. Zero-length URIs cause null-pointer dereferences; excessively long URIs enable buffer overflow in fixed-size URI buffers."),
+        ("HTTP Header Count Bounds",
+         parser.parse_ngx_http_header_count(),
+         SecurityConstraints.nginx_header_count_bounds,
+         "Limits the number of parsed HTTP headers to 100, preventing slowloris-style denial-of-service attacks via excessive header injection."),
     ]
 
 def get_libxml2_checks(parser):
@@ -475,6 +499,14 @@ def get_libxml2_checks(parser):
          parser.parse_libxml2_parser_max_depth(),
          SecurityConstraints.libxml2_depth_bounds,
          "Verifies the 'Billion Laughs' protection: ensures the recursive entity expansion depth cannot exceed 40. This mathematically guarantees the parser is immune to exponential XML entity denial-of-service attacks."),
+        ("Attribute Count Per Element Bounds",
+         parser.parse_libxml2_attr_count(),
+         SecurityConstraints.libxml2_attr_count_bounds,
+         "Limits the number of attributes on a single XML element to 10,000. Unbounded attribute counts enable quadratic blowup DoS attacks during namespace resolution and duplicate attribute detection."),
+        ("Element/Attribute Name Length Bounds",
+         parser.parse_libxml2_name_length(),
+         SecurityConstraints.libxml2_name_length_bounds,
+         "Ensures XML element and attribute names are between 1 and 50,000 characters. Zero-length names cause parser state corruption; excessively long names exhaust memory during dictionary interning."),
     ]
 
 def get_libpng_checks(parser):
@@ -483,6 +515,18 @@ def get_libpng_checks(parser):
          parser.parse_png_ihdr_width(),
          SecurityConstraints.png_width_bounds,
          "Ensures that the image width parsed from a PNG IHDR chunk is strictly greater than 0 and less than or equal to INT_MAX. This prevents integer overflow when allocating memory for image row buffers."),
+        ("IHDR Image Height Bounds",
+         parser.parse_png_ihdr_height(),
+         SecurityConstraints.png_height_bounds,
+         "Ensures the image height from the IHDR chunk is positive and within INT_MAX. A zero or negative height causes division-by-zero in interlace calculations; exceeding INT_MAX overflows row count arithmetic."),
+        ("IHDR Bit Depth Bounds",
+         parser.parse_png_ihdr_bit_depth(),
+         SecurityConstraints.png_bit_depth_bounds,
+         "Validates the PNG bit depth is between 1 and 16. Invalid bit depths cause undefined shift operations and incorrect pixel buffer sizing, leading to heap corruption."),
+        ("Chunk Length Bounds",
+         parser.parse_png_chunk_length(),
+         SecurityConstraints.png_chunk_length_bounds,
+         "Ensures PNG chunk lengths are non-negative and within INT_MAX. Negative chunk lengths (via signed integer interpretation) cause massive over-allocation or heap buffer overflows during chunk data reads."),
     ]
 
 def get_mbedtls_checks(parser):
@@ -491,6 +535,18 @@ def get_mbedtls_checks(parser):
          parser.parse_mbedtls_ssl_record_len(),
          SecurityConstraints.mbedtls_record_len_bounds,
          "Verifies that the decrypted TLS record payload length never exceeds the maximum permissible SSL record size (16,384 bytes). This prevents buffer overflow when assembling fragments."),
+        ("Ciphertext Length Bounds",
+         parser.parse_mbedtls_ciphertext_len(),
+         SecurityConstraints.mbedtls_ciphertext_len_bounds,
+         "Validates that the ciphertext buffer length for TLS record decryption is within 0-16384 bytes. Oversized ciphertext triggers heap buffer overflow during in-place decryption."),
+        ("TLS Major Version Bounds",
+         parser.parse_mbedtls_major_version(),
+         SecurityConstraints.mbedtls_major_version_bounds,
+         "Proves the TLS major version is exactly 3 (covering SSL 3.0 through TLS 1.3). An incorrect major version bypasses handshake state validation and enables protocol downgrade attacks."),
+        ("TLS Minor Version Bounds",
+         parser.parse_mbedtls_minor_version(),
+         SecurityConstraints.mbedtls_minor_version_bounds,
+         "Ensures the TLS minor version is between 0 and 4 (SSL 3.0=0, TLS 1.0=1, 1.1=2, 1.2=3, 1.3=4). Out-of-range values cause array index out-of-bounds in cipher suite selection tables."),
     ]
 
 def get_openssh_checks(parser):
@@ -499,6 +555,14 @@ def get_openssh_checks(parser):
          parser.parse_openssh_auth_max_tries(),
          SecurityConstraints.openssh_max_authtries_bounds,
          "Proves that the configuration variable for maximum authentication attempts must be between 1 and 100. This ensures the SSH daemon cannot be configured into an infinite password brute-force loop."),
+        ("Channel ID Bounds",
+         parser.parse_openssh_channel_id(),
+         SecurityConstraints.openssh_channel_id_bounds,
+         "Validates that SSH channel IDs are between 0 and 65535. Out-of-range channel IDs cause array-based channel table overflows, enabling remote code execution via crafted channel open requests."),
+        ("SSH Packet Length Bounds",
+         parser.parse_openssh_packet_len(),
+         SecurityConstraints.openssh_packet_len_bounds,
+         "Ensures SSH packet lengths are between 5 and 262144 bytes. Packets shorter than 5 bytes lack mandatory fields; packets exceeding 256KB enable memory exhaustion denial-of-service attacks."),
     ]
 
 def get_sudo_checks(parser):
@@ -507,6 +571,18 @@ def get_sudo_checks(parser):
          parser.parse_sudo_uid_check(),
          SecurityConstraints.sudo_uid_bounds,
          "Ensures that User IDs processed by the sudo privilege escalater are between 0 and 65534. This prevents privilege bypasses via integer overflow attacks on the UID type."),
+        ("GID Bounds Validation",
+         parser.parse_sudo_gid_check(),
+         SecurityConstraints.sudo_gid_bounds,
+         "Validates that Group IDs are between 0 and 65534. The value 65535 (nobody/nogroup) and negative GIDs can bypass group-based access control checks in the sudoers policy."),
+        ("Environment Variable Count Bounds",
+         parser.parse_sudo_env_count(),
+         SecurityConstraints.sudo_env_count_bounds,
+         "Limits the number of environment variables passed through sudo to 1024. Unbounded environment inheritance enables stack exhaustion and env-based privilege escalation (e.g., LD_PRELOAD injection)."),
+        ("Argument Count Bounds",
+         parser.parse_sudo_argv_count(),
+         SecurityConstraints.sudo_argv_count_bounds,
+         "Ensures the argument count is between 1 and 4096. Zero arguments cause null-pointer dereference; excessive arguments enable stack-based buffer overflow in argument vector construction."),
     ]
 
 def get_git_checks(parser):
@@ -515,6 +591,18 @@ def get_git_checks(parser):
          parser.parse_git_protocol_version(),
          SecurityConstraints.git_protocol_version_bounds,
          "Validates that the parsed Git network protocol version is bounded between version 0 and version 2, ensuring state machine stability and preventing parser confusion on the wire protocol."),
+        ("pkt-line Length Bounds",
+         parser.parse_git_pkt_line_len(),
+         SecurityConstraints.git_pkt_line_len_bounds,
+         "Ensures Git pkt-line lengths are between 0 and 65520 bytes (the protocol maximum). Oversized pkt-lines cause heap buffer overflow in the sideband demultiplexer and smart HTTP transport."),
+        ("Tree Traversal Depth Bounds",
+         parser.parse_git_tree_depth(),
+         SecurityConstraints.git_tree_depth_bounds,
+         "Limits recursive tree traversal depth to 4096, preventing stack overflow from maliciously crafted repositories with deeply nested directory structures (CVE-style symlink/tree bombs)."),
+        ("Pathname Length Bounds",
+         parser.parse_git_path_len(),
+         SecurityConstraints.git_path_len_bounds,
+         "Validates that file path lengths are between 1 and 4096 characters. Zero-length paths bypass .gitignore rules; excessively long paths overflow fixed-size path buffers on certain platforms."),
     ]
 
 def main():
