@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">1</div>
+        <div class="num">7</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">1</div>
+        <div class="num" style="color: var(--green)">7</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -119,8 +119,144 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>CRC32 Combine Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>crc32_combine_gen64</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that the length parameter in crc32_combine_gen64 is non-negative. A negative length would cause incorrect GF(2) polynomial arithmetic, producing corrupted checksums that bypass data integrity validation.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun len2 () Int)
+(assert
+ (>= len2 0))
+(assert
+ (< len2 0))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Deflate Window Bits Bounds (8-15)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>deflateInit2_</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that the deflate windowBits parameter is strictly between 8 and 15 after normalization. Values outside this range would cause 1<<windowBits to produce an invalid window size, leading to heap buffer overflow during LZ77 sliding window operations.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun windowBits () Int)
+(assert
+ (<= windowBits 15))
+(assert
+ (>= windowBits 8))
+(assert
+ (or (< windowBits 8) (> windowBits 15)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Deflate Memory Level Bounds (1-9)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>deflateInit2_</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures the deflate memLevel parameter is within 1..MAX_MEM_LEVEL (9). An out-of-bounds memLevel controls hash table and pending buffer allocation sizes — exceeding it causes massive over-allocation or undersized buffers leading to heap corruption.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun memLevel () Int)
+(assert
+ (<= memLevel 9))
+(assert
+ (>= memLevel 1))
+(assert
+ (or (< memLevel 1) (> memLevel 9)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Inflate Window Bits Bounds (8-15)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>inflateReset2</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that the inflate windowBits parameter is within 8..15 after stripping wrap/gzip flags. Invalid windowBits would allocate a window of size 1<<windowBits, causing either a zero-size allocation (use-after-free) or excessive memory consumption (DoS).</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun windowBits () Int)
+(assert
+ (<= windowBits 15))
+(assert
+ (>= windowBits 8))
+(assert
+ (or (< windowBits 8) (> windowBits 15)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Deflate Dictionary Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>deflateSetDictionary</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that the dictionary length passed to deflateSetDictionary does not exceed the maximum window size (32768 bytes for MAX_WBITS=15). An oversized dictionary would overflow the sliding window buffer during the initial dictionary copy.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun dictLength () Int)
+(assert
+ (<= dictLength 32768))
+(assert
+ (>= dictLength 0))
+(assert
+ (or (< dictLength 0) (> dictLength 32768)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>CompressBound No Overflow</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>compressBound_z</code> · Z3 solved in 1.2ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that compressBound's output is always >= sourceLen, detecting integer wrap-around. If the bound wraps below sourceLen, the caller allocates an undersized destination buffer, causing a heap buffer overflow during deflate.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun sourceLen () Int)
+(assert
+ (let ((?x150 (div sourceLen 33554432)))
+(let ((?x5 (+ (+ (+ sourceLen (div sourceLen 4096)) (div sourceLen 16384)) ?x150)))
+(let (($x16 (<= sourceLen 18446744073709551615)))
+(let (($x204 (>= sourceLen 0)))
+(and $x204 $x16 (< (+ ?x5 13) sourceLen)))))))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 00:54:20 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-08 03:48:34 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

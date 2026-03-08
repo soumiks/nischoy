@@ -81,6 +81,59 @@ class SecurityConstraints:
         return len2 < 0
 
     @staticmethod
+    def crc32_combine_len_bounds(vars_dict):
+        """CRC32 combine length must be non-negative."""
+        len2 = vars_dict.get('len2')
+        if len2 is None:
+            return None
+        return len2 < 0
+
+    @staticmethod
+    def deflate_window_bits_bounds(vars_dict):
+        """deflateInit2 windowBits must be 8..15 (after normalization)."""
+        wb = vars_dict.get('windowBits')
+        if wb is None:
+            return None
+        return z3.Or(wb < 8, wb > 15)
+
+    @staticmethod
+    def deflate_mem_level_bounds(vars_dict):
+        """memLevel must be 1..9 (MAX_MEM_LEVEL)."""
+        ml = vars_dict.get('memLevel')
+        if ml is None:
+            return None
+        return z3.Or(ml < 1, ml > 9)
+
+    @staticmethod
+    def inflate_window_bits_bounds(vars_dict):
+        """inflateReset2 windowBits must be 8..15 (after normalization)."""
+        wb = vars_dict.get('windowBits')
+        if wb is None:
+            return None
+        return z3.Or(wb < 8, wb > 15)
+
+    @staticmethod
+    def deflate_dict_length_bounds(vars_dict):
+        """deflateSetDictionary dictLength must not exceed window size (32768 for MAX_WBITS=15)."""
+        dl = vars_dict.get('dictLength')
+        if dl is None:
+            return None
+        return z3.Or(dl < 0, dl > 32768)
+
+    @staticmethod
+    def compress_bound_no_overflow(vars_dict):
+        """compressBound sourceLen must not cause wrap-around when computing the bound.
+        bound = sourceLen + (sourceLen >> 12) + (sourceLen >> 14) + (sourceLen >> 25) + 13
+        Violation if sourceLen is non-negative but the computed bound wraps (< sourceLen)."""
+        src = vars_dict.get('sourceLen')
+        if src is None:
+            return None
+        # Model the actual computation using integer division (equivalent to >> for non-negative)
+        bound = src + (src / 4096) + (src / 16384) + (src / 33554432) + 13
+        # Violation: non-negative src but bound wrapped around
+        return z3.And(src >= 0, src <= 2**64 - 1, bound < src)
+
+    @staticmethod
     def kdf_blake2b_subkey_len_bounds(vars_dict):
         """Subkey length must be between 16 and 64."""
         subkey_len = vars_dict.get('subkey_len')

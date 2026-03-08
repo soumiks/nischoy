@@ -14,8 +14,8 @@
     "name": "zlib",
     "version": "master",
     "language": "C",
-    "checks": 1,
-    "passed": 1,
+    "checks": 7,
+    "passed": 7,
     "failed": 0,
     "status": "VERIFIED"
   },

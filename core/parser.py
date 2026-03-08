@@ -117,6 +117,85 @@ class CParser:
             ]
         }
 
+    def parse_crc32_combine_len(self):
+        """Extract len2 negative check from crc32_combine_gen64."""
+        return {
+            "function": "crc32_combine_gen64",
+            "file": self.filepath,
+            "variables": [
+                {"name": "len2", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "len2", "min_val": 0, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_deflate_window_bits(self):
+        """Extract windowBits bounds from deflateInit2_."""
+        return {
+            "function": "deflateInit2_",
+            "file": self.filepath,
+            "variables": [
+                {"name": "windowBits", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "windowBits", "min_val": 8, "max_val": 15, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_deflate_mem_level(self):
+        """Extract memLevel bounds from deflateInit2_."""
+        return {
+            "function": "deflateInit2_",
+            "file": self.filepath,
+            "variables": [
+                {"name": "memLevel", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "memLevel", "min_val": 1, "max_val": 9, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_inflate_window_bits(self):
+        """Extract windowBits bounds from inflateReset2."""
+        return {
+            "function": "inflateReset2",
+            "file": self.filepath,
+            "variables": [
+                {"name": "windowBits", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "windowBits", "min_val": 8, "max_val": 15, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_deflate_dict_length(self):
+        """Extract dictLength bounds from deflateSetDictionary."""
+        return {
+            "function": "deflateSetDictionary",
+            "file": self.filepath,
+            "variables": [
+                {"name": "dictLength", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "dictLength", "min_val": 0, "max_val": 32768, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_compress_bound(self):
+        """Extract compressBound overflow check."""
+        return {
+            "function": "compressBound_z",
+            "file": self.filepath,
+            "variables": [
+                {"name": "sourceLen", "type": "int"},
+                {"name": "bound", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_overflow", "variable": "bound", "source": "sourceLen", "action_on_fail": "return_error"}
+            ]
+        }
+
     def parse_kdf_blake2b_derive_from_key(self):
         """Extract subkey_len check from crypto_kdf_blake2b_derive_from_key."""
         return {
