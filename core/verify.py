@@ -387,11 +387,30 @@ def get_zlib_checks(parser):
     ]
 
 def get_libsodium_checks(parser):
+    libsodium_root = "/tmp/libsodium/src/libsodium"
+    secretbox_parser = CParser(os.path.join(libsodium_root, "crypto_secretbox", "crypto_secretbox_easy.c"))
+    box_parser = CParser(os.path.join(libsodium_root, "crypto_box", "crypto_box_easy.c"))
     return [
         ("KDF Blake2b Subkey Length Bounds",
          parser.parse_kdf_blake2b_derive_from_key(),
          SecurityConstraints.kdf_blake2b_subkey_len_bounds,
          "Cryptographic constraint: Verifies that the derived subkey length strictly adheres to the bounds defined by the Blake2b hashing algorithm, preventing memory corruption or weak keys."),
+        ("Secretbox Message Length Bounds",
+         secretbox_parser.parse_crypto_secretbox_message_len(),
+         SecurityConstraints.crypto_secretbox_message_len_bounds,
+         "Proves that callers never encrypt more than crypto_secretbox_MESSAGEBYTES_MAX bytes. Without this cap the MAC-and-stream construction would wrap size_t arithmetic and allocate undersized buffers."),
+        ("Secretbox Ciphertext Includes MAC",
+         secretbox_parser.parse_crypto_secretbox_open_clen(),
+         SecurityConstraints.crypto_secretbox_ciphertext_len_bounds,
+         "Ensures that crypto_secretbox_open_easy rejects ciphertexts shorter than the 16-byte Poly1305 tag. This prevents length underflow before subtracting MACBYTES, which would otherwise lead to giant plaintext copies."),
+        ("Curve25519 Box Message Length Bounds",
+         box_parser.parse_crypto_box_message_len(),
+         SecurityConstraints.crypto_box_message_len_bounds,
+         "Shows that crypto_box_easy enforces the NaCl MESSAGEBYTES_MAX limit. The composed XSalsa20 stream cipher would misbehave if mlen rolled past SIZE_MAX or exceeded the largest representable keystream."),
+        ("Curve25519 Box Ciphertext Includes MAC",
+         box_parser.parse_crypto_box_open_clen(),
+         SecurityConstraints.crypto_box_ciphertext_len_bounds,
+         "Validates that every ciphertext given to crypto_box_open_easy carries at least a 16-byte Poly1305 authenticator, preventing integer underflow when stripping the MAC before decryption."),
     ]
 
 def get_sqlite_checks(parser):

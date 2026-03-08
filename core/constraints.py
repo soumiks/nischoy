@@ -142,6 +142,40 @@ class SecurityConstraints:
         return z3.Or(subkey_len < 16, subkey_len > 64)
 
     @staticmethod
+    def crypto_secretbox_message_len_bounds(vars_dict):
+        """Message length for crypto_secretbox_easy must not exceed MESSAGEBYTES_MAX."""
+        mlen = vars_dict.get('mlen')
+        if mlen is None:
+            return None
+        max_mlen = (1 << 64) - 1 - 16  # SODIUM_SIZE_MAX - crypto_secretbox_MACBYTES
+        return z3.Or(mlen < 0, mlen > max_mlen)
+
+    @staticmethod
+    def crypto_secretbox_ciphertext_len_bounds(vars_dict):
+        """Ciphertext length must include at least MACBYTES (16)."""
+        clen = vars_dict.get('clen')
+        if clen is None:
+            return None
+        return clen < 16
+
+    @staticmethod
+    def crypto_box_message_len_bounds(vars_dict):
+        """crypto_box_easy enforces MESSAGEBYTES_MAX just like NaCl."""
+        mlen = vars_dict.get('mlen')
+        if mlen is None:
+            return None
+        max_mlen = (1 << 64) - 1 - 16  # SODIUM_SIZE_MAX - crypto_box_MACBYTES
+        return z3.Or(mlen < 0, mlen > max_mlen)
+
+    @staticmethod
+    def crypto_box_ciphertext_len_bounds(vars_dict):
+        """Ciphertext handed to crypto_box_open_easy must contain a MAC."""
+        clen = vars_dict.get('clen')
+        if clen is None:
+            return None
+        return clen < 16
+
+    @staticmethod
     def sqlite3_limit_bounds(vars_dict):
         """limitId must be non-negative and within N_LIMIT."""
         limitId = vars_dict.get('limitId')

@@ -209,6 +209,60 @@ class CParser:
             ]
         }
 
+    def parse_crypto_secretbox_message_len(self):
+        """Extract mlen bounds enforcement from crypto_secretbox_easy."""
+        max_mlen = (1 << 64) - 1 - 16  # SODIUM_SIZE_MAX - crypto_secretbox_MACBYTES
+        return {
+            "function": "crypto_secretbox_easy",
+            "file": self.filepath,
+            "variables": [
+                {"name": "mlen", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "mlen", "min_val": 0, "max_val": max_mlen, "action_on_fail": "sodium_misuse"}
+            ]
+        }
+
+    def parse_crypto_secretbox_open_clen(self):
+        """Extract ciphertext length lower bound from crypto_secretbox_open_easy."""
+        return {
+            "function": "crypto_secretbox_open_easy",
+            "file": self.filepath,
+            "variables": [
+                {"name": "clen", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "clen", "min_val": 16, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_crypto_box_message_len(self):
+        """Extract mlen bounds from crypto_box_easy/afternm."""
+        max_mlen = (1 << 64) - 1 - 16  # SODIUM_SIZE_MAX - crypto_box_MACBYTES
+        return {
+            "function": "crypto_box_easy",
+            "file": self.filepath,
+            "variables": [
+                {"name": "mlen", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "mlen", "min_val": 0, "max_val": max_mlen, "action_on_fail": "sodium_misuse"}
+            ]
+        }
+
+    def parse_crypto_box_open_clen(self):
+        """Extract ciphertext length lower bound from crypto_box_open_easy."""
+        return {
+            "function": "crypto_box_open_easy",
+            "file": self.filepath,
+            "variables": [
+                {"name": "clen", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "clen", "min_val": 16, "action_on_fail": "return_error"}
+            ]
+        }
+
     def parse_sqlite3_limit(self):
         """Extract limitId check from sqlite3_limit."""
         return {
