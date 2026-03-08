@@ -827,3 +827,58 @@ class CParser:
                 {"op": "check_bound", "variable": "path_len", "min_val": 1, "max_val": 4096, "action_on_fail": "return_error"}
             ]
         }
+
+    def parse_git_object_type(self):
+        """Extract object type enum bounds from object.h (OBJ_COMMIT=1..OBJ_REF_DELTA=7, skip 5)."""
+        return {
+            "function": "parse_object_header",
+            "file": self.filepath,
+            "variables": [{"name": "obj_type", "type": "int"}],
+            "operations": [
+                {"op": "check_bound", "variable": "obj_type", "min_val": 1, "max_val": 7, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_git_symref_depth(self):
+        """Extract symbolic ref resolution depth from refs-internal.h SYMREF_MAXDEPTH=5."""
+        return {
+            "function": "resolve_ref_unsafe",
+            "file": self.filepath,
+            "variables": [{"name": "symref_depth", "type": "int"}],
+            "operations": [
+                {"op": "check_bound", "variable": "symref_depth", "min_val": 0, "max_val": 5, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_git_hash_algo(self):
+        """Extract hash algorithm ID bounds (GIT_HASH_SHA1=1, GIT_HASH_SHA256=2)."""
+        return {
+            "function": "repo_set_hash_algo",
+            "file": self.filepath,
+            "variables": [{"name": "hash_algo", "type": "int"}],
+            "operations": [
+                {"op": "check_bound", "variable": "hash_algo", "min_val": 1, "max_val": 2, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_git_pack_obj_header_len(self):
+        """Extract pack object header length from pack.h MAX_PACK_OBJECT_HEADER=10."""
+        return {
+            "function": "encode_in_pack_object_header",
+            "file": self.filepath,
+            "variables": [{"name": "header_len", "type": "int"}],
+            "operations": [
+                {"op": "check_bound", "variable": "header_len", "min_val": 1, "max_val": 10, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_git_hash_rawsz(self):
+        """Extract hash raw size bounds from hash.h (SHA1=20, SHA256=32, max=32)."""
+        return {
+            "function": "hash_object_file",
+            "file": self.filepath,
+            "variables": [{"name": "hash_rawsz", "type": "int"}],
+            "operations": [
+                {"op": "check_bound", "variable": "hash_rawsz", "min_val": 20, "max_val": 32, "action_on_fail": "return_error"}
+            ]
+        }

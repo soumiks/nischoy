@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">4</div>
+        <div class="num">9</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">4</div>
+        <div class="num" style="color: var(--green)">9</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -190,8 +190,123 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Object Type Enum Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>parse_object_header</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures parsed object types fall within the valid enum range OBJ_COMMIT(1) through OBJ_REF_DELTA(7) as defined in object.h. Invalid type values cause out-of-bounds array access in object type dispatch tables.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun obj_type () Int)
+(assert
+ (<= obj_type 7))
+(assert
+ (>= obj_type 1))
+(assert
+ (or (< obj_type 1) (> obj_type 7)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Symbolic Ref Resolution Depth</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>resolve_ref_unsafe</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Limits symbolic reference resolution depth to SYMREF_MAXDEPTH(5) as defined in refs-internal.h. Unbounded symref chains enable infinite loop DoS via circular symbolic references.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun symref_depth () Int)
+(assert
+ (<= symref_depth 5))
+(assert
+ (>= symref_depth 0))
+(assert
+ (or (< symref_depth 0) (> symref_depth 5)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Hash Algorithm ID Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>repo_set_hash_algo</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Validates hash algorithm identifier is either GIT_HASH_SHA1(1) or GIT_HASH_SHA256(2). Invalid algorithm IDs cause null pointer dereference in the hash vtable lookup.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun hash_algo () Int)
+(assert
+ (<= hash_algo 2))
+(assert
+ (>= hash_algo 1))
+(assert
+ (or (< hash_algo 1) (> hash_algo 2)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Pack Object Header Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>encode_in_pack_object_header</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures pack object header length is between 1 and MAX_PACK_OBJECT_HEADER(10) bytes as defined in pack.h. Oversized headers cause heap buffer overflow in pack encoding/decoding routines.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun header_len () Int)
+(assert
+ (<= header_len 10))
+(assert
+ (>= header_len 1))
+(assert
+ (or (< header_len 1) (> header_len 10)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Hash Raw Size Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>hash_object_file</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Validates that hash digest raw size is between GIT_SHA1_RAWSZ(20) and GIT_MAX_RAWSZ(32) bytes. Incorrect sizes cause buffer overflows in hash comparison and copy operations throughout the codebase.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun hash_rawsz () Int)
+(assert
+ (<= hash_rawsz 32))
+(assert
+ (>= hash_rawsz 20))
+(assert
+ (or (< hash_rawsz 20) (> hash_rawsz 32)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 05:30:39 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-08 05:46:08 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

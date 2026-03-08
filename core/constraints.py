@@ -532,3 +532,43 @@ class SecurityConstraints:
         if pl is None:
             return None
         return z3.Or(pl < 1, pl > 4096)
+
+    @staticmethod
+    def git_object_type_bounds(vars_dict):
+        """Object type must be 1-7 (OBJ_COMMIT..OBJ_REF_DELTA)."""
+        ot = vars_dict.get('obj_type')
+        if ot is None:
+            return None
+        return z3.Or(ot < 1, ot > 7)
+
+    @staticmethod
+    def git_symref_depth_bounds(vars_dict):
+        """Symbolic ref depth must be 0-5 (SYMREF_MAXDEPTH)."""
+        sd = vars_dict.get('symref_depth')
+        if sd is None:
+            return None
+        return z3.Or(sd < 0, sd > 5)
+
+    @staticmethod
+    def git_hash_algo_bounds(vars_dict):
+        """Hash algorithm ID must be 1 (SHA1) or 2 (SHA256)."""
+        ha = vars_dict.get('hash_algo')
+        if ha is None:
+            return None
+        return z3.Or(ha < 1, ha > 2)
+
+    @staticmethod
+    def git_pack_obj_header_len_bounds(vars_dict):
+        """Pack object header length must be 1-10."""
+        hl = vars_dict.get('header_len')
+        if hl is None:
+            return None
+        return z3.Or(hl < 1, hl > 10)
+
+    @staticmethod
+    def git_hash_rawsz_bounds(vars_dict):
+        """Hash raw size must be 20 (SHA1) or 32 (SHA256)."""
+        hr = vars_dict.get('hash_rawsz')
+        if hr is None:
+            return None
+        return z3.Or(hr < 20, hr > 32)

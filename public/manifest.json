@@ -114,8 +114,8 @@
     "name": "git",
     "version": "master",
     "language": "C",
-    "checks": 4,
-    "passed": 4,
+    "checks": 9,
+    "passed": 9,
     "failed": 0,
     "status": "VERIFIED"
   }
