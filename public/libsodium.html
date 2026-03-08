@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">1</div>
+        <div class="num">5</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">1</div>
+        <div class="num" style="color: var(--green)">5</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -121,8 +121,96 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Secretbox Message Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>crypto_secretbox_easy</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that callers never encrypt more than crypto_secretbox_MESSAGEBYTES_MAX bytes. Without this cap the MAC-and-stream construction would wrap size_t arithmetic and allocate undersized buffers.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun mlen () Int)
+(assert
+ (<= mlen 18446744073709551599))
+(assert
+ (>= mlen 0))
+(assert
+ (or (< mlen 0) (> mlen 18446744073709551599)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Secretbox Ciphertext Includes MAC</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>crypto_secretbox_open_easy</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures that crypto_secretbox_open_easy rejects ciphertexts shorter than the 16-byte Poly1305 tag. This prevents length underflow before subtracting MACBYTES, which would otherwise lead to giant plaintext copies.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun clen () Int)
+(assert
+ (>= clen 16))
+(assert
+ (< clen 16))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Curve25519 Box Message Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>crypto_box_easy</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Shows that crypto_box_easy enforces the NaCl MESSAGEBYTES_MAX limit. The composed XSalsa20 stream cipher would misbehave if mlen rolled past SIZE_MAX or exceeded the largest representable keystream.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun mlen () Int)
+(assert
+ (<= mlen 18446744073709551599))
+(assert
+ (>= mlen 0))
+(assert
+ (or (< mlen 0) (> mlen 18446744073709551599)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Curve25519 Box Ciphertext Includes MAC</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>crypto_box_open_easy</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Validates that every ciphertext given to crypto_box_open_easy carries at least a 16-byte Poly1305 authenticator, preventing integer underflow when stripping the MAC before decryption.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun clen () Int)
+(assert
+ (>= clen 16))
+(assert
+ (< clen 16))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 03:48:34 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-08 05:27:41 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

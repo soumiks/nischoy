@@ -238,7 +238,7 @@
         <h3>CompressBound No Overflow</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>compressBound_z</code> · Z3 solved in 1.2ms</p>
+      <p class="result-meta">Function: <code>compressBound_z</code> · Z3 solved in 0.3ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that compressBound's output is always >= sourceLen, detecting integer wrap-around. If the bound wraps below sourceLen, the caller allocates an undersized destination buffer, causing a heap buffer overflow during deflate.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -256,7 +256,7 @@
       </details>
     </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 03:48:34 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-08 05:27:41 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

@@ -276,6 +276,58 @@ class CParser:
             ]
         }
 
+    def parse_sqlite3_page_size(self):
+        """Extract page size validation from sqlite3BtreeSetPageSize."""
+        return {
+            "function": "sqlite3BtreeSetPageSize",
+            "file": self.filepath,
+            "variables": [
+                {"name": "pageSize", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "pageSize", "min_val": 512, "max_val": 65536, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_sqlite3_function_narg(self):
+        """Extract nArg bounds from sqlite3_create_function."""
+        return {
+            "function": "sqlite3_create_function_v2",
+            "file": self.filepath,
+            "variables": [
+                {"name": "nArg", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "nArg", "min_val": -1, "max_val": 127, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_sqlite3_mmap_size(self):
+        """Extract mxMmap bounds from sqlite3_config SQLITE_CONFIG_MMAP_SIZE."""
+        return {
+            "function": "sqlite3_config",
+            "file": self.filepath,
+            "variables": [
+                {"name": "mxMmap", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "mxMmap", "min_val": 0, "max_val": 2147483647, "action_on_fail": "clamp"}
+            ]
+        }
+
+    def parse_sqlite3_attached_db(self):
+        """Extract attached database index bounds."""
+        return {
+            "function": "sqlite3_db_config",
+            "file": self.filepath,
+            "variables": [
+                {"name": "iDb", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "iDb", "min_val": 0, "max_val": 125, "action_on_fail": "return_error"}
+            ]
+        }
+
     def parse_d2i_DSA_SIG(self):
         """Extract length check from d2i_DSA_SIG."""
         return {

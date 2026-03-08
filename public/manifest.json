@@ -24,8 +24,8 @@
     "name": "libsodium",
     "version": "master",
     "language": "C",
-    "checks": 1,
-    "passed": 1,
+    "checks": 5,
+    "passed": 5,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -34,8 +34,8 @@
     "name": "sqlite",
     "version": "master",
     "language": "C",
-    "checks": 1,
-    "passed": 1,
+    "checks": 5,
+    "passed": 5,
     "failed": 0,
     "status": "VERIFIED"
   },

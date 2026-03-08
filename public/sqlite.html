@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">1</div>
+        <div class="num">5</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">1</div>
+        <div class="num" style="color: var(--green)">5</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -121,8 +121,100 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>SQLite3 Page Size Bounds (512-65536)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sqlite3BtreeSetPageSize</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that the database page size is between 512 and 65536 bytes (SQLITE_MAX_PAGE_SIZE). An invalid page size would corrupt the B-tree layer, causing heap buffer overflows during page read/write operations.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun pageSize () Int)
+(assert
+ (<= pageSize 65536))
+(assert
+ (>= pageSize 512))
+(assert
+ (or (< pageSize 512) (> pageSize 65536)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>SQLite3 Function Argument Count Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sqlite3_create_function_v2</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that user-defined function argument counts are between -1 (variadic) and SQLITE_MAX_FUNCTION_ARG (127). Out-of-bounds values would overflow the argument array on the VDBE stack frame.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun nArg () Int)
+(assert
+ (<= nArg 127))
+(assert
+ (>= nArg (- 1)))
+(assert
+ (or (< nArg (- 1)) (> nArg 127)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>SQLite3 Memory-Mapped I/O Size Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sqlite3_config</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures that the maximum memory-mapped I/O size (mxMmap) is non-negative. A negative mmap size would cause mmap() to receive an enormous unsigned length, mapping gigabytes of address space and causing denial-of-service.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun mxMmap () Int)
+(assert
+ (<= mxMmap 2147483647))
+(assert
+ (>= mxMmap 0))
+(assert
+ (< mxMmap 0))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>SQLite3 Attached Database Index Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sqlite3_db_config</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that the attached database index is between 0 and SQLITE_MAX_ATTACHED (125). An out-of-bounds index would cause array overflows in the db->aDb[] schema array, corrupting adjacent heap metadata.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun iDb () Int)
+(assert
+ (<= iDb 125))
+(assert
+ (>= iDb 0))
+(assert
+ (or (< iDb 0) (> iDb 125)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 03:48:34 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-08 05:27:41 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

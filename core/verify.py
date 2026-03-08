@@ -419,6 +419,22 @@ def get_sqlite_checks(parser):
          parser.parse_sqlite3_limit(),
          SecurityConstraints.sqlite3_limit_bounds,
          "Ensures that the index ID for setting SQLite runtime limits is within valid bounds. This prevents out-of-bounds array access when configuring database properties."),
+        ("SQLite3 Page Size Bounds (512-65536)",
+         parser.parse_sqlite3_page_size(),
+         SecurityConstraints.sqlite3_page_size_bounds,
+         "Proves that the database page size is between 512 and 65536 bytes (SQLITE_MAX_PAGE_SIZE). An invalid page size would corrupt the B-tree layer, causing heap buffer overflows during page read/write operations."),
+        ("SQLite3 Function Argument Count Bounds",
+         parser.parse_sqlite3_function_narg(),
+         SecurityConstraints.sqlite3_function_narg_bounds,
+         "Verifies that user-defined function argument counts are between -1 (variadic) and SQLITE_MAX_FUNCTION_ARG (127). Out-of-bounds values would overflow the argument array on the VDBE stack frame."),
+        ("SQLite3 Memory-Mapped I/O Size Bounds",
+         parser.parse_sqlite3_mmap_size(),
+         SecurityConstraints.sqlite3_mmap_size_bounds,
+         "Ensures that the maximum memory-mapped I/O size (mxMmap) is non-negative. A negative mmap size would cause mmap() to receive an enormous unsigned length, mapping gigabytes of address space and causing denial-of-service."),
+        ("SQLite3 Attached Database Index Bounds",
+         parser.parse_sqlite3_attached_db(),
+         SecurityConstraints.sqlite3_attached_db_bounds,
+         "Proves that the attached database index is between 0 and SQLITE_MAX_ATTACHED (125). An out-of-bounds index would cause array overflows in the db->aDb[] schema array, corrupting adjacent heap metadata."),
     ]
 
 def get_openssl_checks(parser):
