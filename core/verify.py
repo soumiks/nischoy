@@ -551,6 +551,10 @@ def get_mbedtls_checks(parser):
          parser.parse_mbedtls_minor_version(),
          SecurityConstraints.mbedtls_minor_version_bounds,
          "Ensures the TLS minor version is between 0 and 4 (SSL 3.0=0, TLS 1.0=1, 1.1=2, 1.2=3, 1.3=4). Out-of-range values cause array index out-of-bounds in cipher suite selection tables."),
+        ("TLS Record Content Type Bounds",
+         parser.parse_mbedtls_content_type(),
+         SecurityConstraints.mbedtls_content_type_bounds,
+         "Verifies TLS record content types are limited to the protocol-defined range 20..24 (change_cipher_spec, alert, handshake, application_data, heartbeat). Out-of-range content types can desynchronize record parsing and bypass state-machine checks."),
     ]
 
 def get_openssh_checks(parser):

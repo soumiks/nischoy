@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">4</div>
+        <div class="num">5</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">4</div>
+        <div class="num" style="color: var(--green)">5</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -104,7 +104,7 @@
         <h3>SSL Record Data Length Bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>ssl_encrypt_buf</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>ssl_encrypt_buf</code> · Z3 solved in 0.1ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that the decrypted TLS record payload length never exceeds the maximum permissible SSL record size (16,384 bytes). This prevents buffer overflow when assembling fragments.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -190,8 +190,31 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>TLS Record Content Type Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>mbedtls_ssl_read_record</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies TLS record content types are limited to the protocol-defined range 20..24 (change_cipher_spec, alert, handshake, application_data, heartbeat). Out-of-range content types can desynchronize record parsing and bypass state-machine checks.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun tls_content_type () Int)
+(assert
+ (<= tls_content_type 24))
+(assert
+ (>= tls_content_type 20))
+(assert
+ (or (< tls_content_type 20) (> tls_content_type 24)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 05:46:08 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-12 19:49:35 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

@@ -471,6 +471,14 @@ class SecurityConstraints:
             return None
         return z3.Or(mv < 0, mv > 4)
 
+    @staticmethod
+    def mbedtls_content_type_bounds(vars_dict):
+        """TLS record content type must be between 20 and 24."""
+        ct = vars_dict.get('tls_content_type')
+        if ct is None:
+            return None
+        return z3.Or(ct < 20, ct > 24)
+
     # ── openssh additional constraints ──
 
     @staticmethod

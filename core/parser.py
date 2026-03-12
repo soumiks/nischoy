@@ -731,6 +731,19 @@ class CParser:
             ]
         }
 
+    def parse_mbedtls_content_type(self):
+        """Extract TLS record content type bounds."""
+        return {
+            "function": "mbedtls_ssl_read_record",
+            "file": self.filepath,
+            "variables": [
+                {"name": "tls_content_type", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "tls_content_type", "min_val": 20, "max_val": 24, "action_on_fail": "return_error"}
+            ]
+        }
+
     # ── openssh additional parsers ──
 
     def parse_openssh_channel_id(self):
