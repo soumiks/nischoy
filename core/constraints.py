@@ -583,8 +583,16 @@ class SecurityConstraints:
 
     @staticmethod
     def git_hash_rawsz_bounds(vars_dict):
-        """Hash raw size must be 20 (SHA1) or 32 (SHA256)."""
+        """Hash raw size must be 20 (SHA1) to 32 (SHA256)."""
         hr = vars_dict.get('hash_rawsz')
         if hr is None:
             return None
         return z3.Or(hr < 20, hr > 32)
+
+    @staticmethod
+    def git_hash_bits_bounds(vars_dict):
+        """Hash digest bit-length must remain within 160-256 bits."""
+        hr = vars_dict.get('hash_rawsz')
+        if hr is None:
+            return None
+        return z3.Or((hr * 8) < 160, (hr * 8) > 256)

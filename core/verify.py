@@ -631,6 +631,10 @@ def get_git_checks(parser):
          parser.parse_git_hash_rawsz(),
          SecurityConstraints.git_hash_rawsz_bounds,
          "Validates that hash digest raw size is between GIT_SHA1_RAWSZ(20) and GIT_MAX_RAWSZ(32) bytes. Incorrect sizes cause buffer overflows in hash comparison and copy operations throughout the codebase."),
+        ("Hash Digest Bit-Length Bounds",
+         parser.parse_git_hash_rawsz(),
+         SecurityConstraints.git_hash_bits_bounds,
+         "Ensures computed digest width remains within 160-256 bits (20-32 bytes). This protects callers that allocate fixed digest-sized buffers from over/under-sized hash values during copy and comparison operations."),
     ]
 
 def main():
