@@ -393,6 +393,14 @@ class SecurityConstraints:
             return None
         return z3.Or(hc < 0, hc > 100)
 
+    @staticmethod
+    def nginx_http_minor_version_bounds(vars_dict):
+        """HTTP minor version must be 0-9."""
+        minor = vars_dict.get('http_minor')
+        if minor is None:
+            return None
+        return z3.Or(minor < 0, minor > 9)
+
     # ── libxml2 additional constraints ──
 
     @staticmethod

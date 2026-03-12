@@ -608,6 +608,19 @@ class CParser:
             ]
         }
 
+    def parse_ngx_http_version_minor(self):
+        """Extract HTTP minor version bounds from request-line parser."""
+        return {
+            "function": "ngx_http_parse_request_line",
+            "file": self.filepath,
+            "variables": [
+                {"name": "http_minor", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "http_minor", "min_val": 0, "max_val": 9, "action_on_fail": "return_error"}
+            ]
+        }
+
     # ── libxml2 additional parsers ──
 
     def parse_libxml2_attr_count(self):

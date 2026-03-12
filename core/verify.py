@@ -491,6 +491,10 @@ def get_nginx_checks(parser):
          parser.parse_ngx_http_header_count(),
          SecurityConstraints.nginx_header_count_bounds,
          "Limits the number of parsed HTTP headers to 100, preventing slowloris-style denial-of-service attacks via excessive header injection."),
+        ("HTTP Minor Version Bounds",
+         parser.parse_ngx_http_version_minor(),
+         SecurityConstraints.nginx_http_minor_version_bounds,
+         "Ensures parsed HTTP minor versions are in the range 0-9. Out-of-range values can destabilize request parsing state machines and create parser differential behavior across proxies."),
     ]
 
 def get_libxml2_checks(parser):
