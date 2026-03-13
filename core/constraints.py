@@ -264,6 +264,14 @@ class SecurityConstraints:
         return mxMmap < 0
 
     @staticmethod
+    def sqlite3_variable_number_bounds(vars_dict):
+        """SQL parameter index (?NNN) must be between 1 and SQLITE_MAX_VARIABLE_NUMBER (32766)."""
+        var_num = vars_dict.get('variable_number')
+        if var_num is None:
+            return None
+        return z3.Or(var_num < 1, var_num > 32766)
+
+    @staticmethod
     def dsa_sig_len_bounds(vars_dict):
         """Length must be non-negative."""
         length = vars_dict.get('len')

@@ -463,6 +463,10 @@ def get_sqlite_checks(parser):
          parser.parse_sqlite3_blob_length(),
          SecurityConstraints.sqlite3_blob_length_bounds,
          "Proves that BLOB and string values never exceed SQLITE_MAX_LENGTH (1,000,000,000 bytes). Without this cap, oversized values cause integer overflow in memory allocation arithmetic, leading to heap buffer overflows."),
+        ("SQLite3 SQL Parameter Index Bounds (SQLITE_MAX_VARIABLE_NUMBER)",
+         parser.parse_sqlite3_variable_number(),
+         SecurityConstraints.sqlite3_variable_number_bounds,
+         "Verifies that SQL parameter indices (?NNN syntax) are between 1 and SQLITE_MAX_VARIABLE_NUMBER (32766). An out-of-bounds parameter index overflows the apArg[] array on the VDBE stack, enabling heap corruption via crafted SQL."),
     ]
 
 def get_openssl_checks(parser):

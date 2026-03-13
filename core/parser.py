@@ -541,6 +541,19 @@ class CParser:
             ]
         }
 
+    def parse_sqlite3_variable_number(self):
+        """Extract SQL parameter index bounds (SQLITE_MAX_VARIABLE_NUMBER)."""
+        return {
+            "function": "sqlite3ExprCodeTarget",
+            "file": self.filepath,
+            "variables": [
+                {"name": "variable_number", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "variable_number", "min_val": 1, "max_val": 32766, "action_on_fail": "return_error"}
+            ]
+        }
+
     def parse_git_protocol_version(self):
         """Extract protocol version bounds from git."""
         return {
