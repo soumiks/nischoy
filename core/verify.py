@@ -511,6 +511,10 @@ def get_nginx_checks(parser):
          parser.parse_ngx_http_version_minor(),
          SecurityConstraints.nginx_http_minor_version_bounds,
          "Ensures parsed HTTP minor versions are in the range 0-9. Out-of-range values can destabilize request parsing state machines and create parser differential behavior across proxies."),
+        ("HTTP Major Version Bounds",
+         parser.parse_ngx_http_version_major(),
+         SecurityConstraints.nginx_http_major_version_bounds,
+         "Ensures parsed HTTP major versions remain in the range 0-9. Out-of-range values can desynchronize protocol handling assumptions between NGINX and upstream/downstream HTTP components."),
     ]
 
 def get_libxml2_checks(parser):

@@ -438,6 +438,14 @@ class SecurityConstraints:
             return None
         return z3.Or(minor < 0, minor > 9)
 
+    @staticmethod
+    def nginx_http_major_version_bounds(vars_dict):
+        """HTTP major version must be 0-9."""
+        major = vars_dict.get('http_major')
+        if major is None:
+            return None
+        return z3.Or(major < 0, major > 9)
+
     # ── libxml2 additional constraints ──
 
     @staticmethod
