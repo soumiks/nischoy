@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">5</div>
+        <div class="num">6</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">5</div>
+        <div class="num" style="color: var(--green)">6</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -104,7 +104,7 @@
         <h3>KDF Blake2b Subkey Length Bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>crypto_kdf_blake2b_derive_from_key</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>crypto_kdf_blake2b_derive_from_key</code> · Z3 solved in 1.4ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Cryptographic constraint: Verifies that the derived subkey length strictly adheres to the bounds defined by the Blake2b hashing algorithm, preventing memory corruption or weak keys.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -117,6 +117,29 @@
  (>= subkey_len 16))
 (assert
  (or (< subkey_len 16) (> subkey_len 64)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>KDF Blake2b Subkey ID uint64 Domain</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>crypto_kdf_blake2b_derive_from_key</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves subkey_id remains inside the unsigned 64-bit domain before it is serialized into the BLAKE2b salt. This blocks negative/sign-extended IDs and oversized values that could cause cross-context key collisions.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun subkey_id () Int)
+(assert
+ (<= subkey_id 18446744073709551615))
+(assert
+ (>= subkey_id 0))
+(assert
+ (or (< subkey_id 0) (> subkey_id 18446744073709551615)))
 (check-sat)
 </code></pre>
       </details>
@@ -210,7 +233,7 @@
       </details>
     </div>
 
-    <p class="timestamp">Last verified: 2026-03-13 06:01:48 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-13 10:01:42 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

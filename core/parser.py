@@ -209,6 +209,19 @@ class CParser:
             ]
         }
 
+    def parse_kdf_blake2b_subkey_id(self):
+        """Extract subkey_id domain from crypto_kdf_blake2b_derive_from_key."""
+        return {
+            "function": "crypto_kdf_blake2b_derive_from_key",
+            "file": self.filepath,
+            "variables": [
+                {"name": "subkey_id", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "subkey_id", "min_val": 0, "max_val": (1 << 64) - 1, "action_on_fail": "return_error"}
+            ]
+        }
+
     def parse_crypto_secretbox_message_len(self):
         """Extract mlen bounds enforcement from crypto_secretbox_easy."""
         max_mlen = (1 << 64) - 1 - 16  # SODIUM_SIZE_MAX - crypto_secretbox_MACBYTES

@@ -150,6 +150,14 @@ class SecurityConstraints:
         return z3.Or(subkey_len < 16, subkey_len > 64)
 
     @staticmethod
+    def kdf_blake2b_subkey_id_bounds(vars_dict):
+        """Subkey ID must stay within uint64 domain."""
+        subkey_id = vars_dict.get('subkey_id')
+        if subkey_id is None:
+            return None
+        return z3.Or(subkey_id < 0, subkey_id > (1 << 64) - 1)
+
+    @staticmethod
     def crypto_secretbox_message_len_bounds(vars_dict):
         """Message length for crypto_secretbox_easy must not exceed MESSAGEBYTES_MAX."""
         mlen = vars_dict.get('mlen')
