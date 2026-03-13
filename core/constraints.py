@@ -532,6 +532,14 @@ class SecurityConstraints:
             return None
         return z3.Or(ct < 20, ct > 24)
 
+    @staticmethod
+    def mbedtls_record_header_len_bounds(vars_dict):
+        """TLS record header length must be exactly 5 bytes."""
+        header_len = vars_dict.get('record_header_len')
+        if header_len is None:
+            return None
+        return z3.Or(header_len < 5, header_len > 5)
+
     # ── openssh additional constraints ──
 
     @staticmethod

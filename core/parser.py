@@ -811,6 +811,19 @@ class CParser:
             ]
         }
 
+    def parse_mbedtls_record_header_len(self):
+        """Extract TLS record header length invariant."""
+        return {
+            "function": "mbedtls_ssl_read_record",
+            "file": self.filepath,
+            "variables": [
+                {"name": "record_header_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "record_header_len", "min_val": 5, "max_val": 5, "action_on_fail": "return_error"}
+            ]
+        }
+
     # ── openssh additional parsers ──
 
     def parse_openssh_channel_id(self):

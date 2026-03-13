@@ -579,6 +579,10 @@ def get_mbedtls_checks(parser):
          parser.parse_mbedtls_content_type(),
          SecurityConstraints.mbedtls_content_type_bounds,
          "Verifies TLS record content types are limited to the protocol-defined range 20..24 (change_cipher_spec, alert, handshake, application_data, heartbeat). Out-of-range content types can desynchronize record parsing and bypass state-machine checks."),
+        ("TLS Record Header Length Equals 5",
+         parser.parse_mbedtls_record_header_len(),
+         SecurityConstraints.mbedtls_record_header_len_bounds,
+         "Proves TLS record parsing assumes the fixed 5-byte header (type + version + length). Any deviation can shift payload offsets, causing parser desynchronization and potential out-of-bounds reads."),
     ]
 
 def get_openssh_checks(parser):
