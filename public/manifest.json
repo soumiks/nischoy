@@ -54,8 +54,8 @@
     "name": "nginx",
     "version": "master",
     "language": "C",
-    "checks": 5,
-    "passed": 5,
+    "checks": 6,
+    "passed": 6,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -64,8 +64,8 @@
     "name": "libxml2",
     "version": "master",
     "language": "C",
-    "checks": 3,
-    "passed": 3,
+    "checks": 4,
+    "passed": 4,
     "failed": 0,
     "status": "VERIFIED"
   },

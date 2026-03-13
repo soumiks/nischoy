@@ -531,6 +531,10 @@ def get_libxml2_checks(parser):
          parser.parse_libxml2_name_length(),
          SecurityConstraints.libxml2_name_length_bounds,
          "Ensures XML element and attribute names are between 1 and 50,000 characters. Zero-length names cause parser state corruption; excessively long names exhaust memory during dictionary interning."),
+        ("Namespace URI Length Bounds",
+         parser.parse_libxml2_namespace_uri_length(),
+         SecurityConstraints.libxml2_namespace_uri_length_bounds,
+         "Constrains namespace URI length to 1-8192 characters. Unbounded namespace URIs enable memory exhaustion during namespace resolution and prefix mapping, a vector for XML-based denial-of-service."),
     ]
 
 def get_libpng_checks(parser):

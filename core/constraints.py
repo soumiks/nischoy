@@ -464,6 +464,14 @@ class SecurityConstraints:
             return None
         return z3.Or(nl < 1, nl > 50000)
 
+    @staticmethod
+    def libxml2_namespace_uri_length_bounds(vars_dict):
+        """Namespace URI length must be 1-8192 to prevent memory exhaustion."""
+        uri_len = vars_dict.get('ns_uri_len')
+        if uri_len is None:
+            return None
+        return z3.Or(uri_len < 1, uri_len > 8192)
+
     # ── libpng additional constraints ──
 
     @staticmethod

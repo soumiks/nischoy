@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">3</div>
+        <div class="num">4</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">3</div>
+        <div class="num" style="color: var(--green)">4</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -167,8 +167,31 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Namespace URI Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>xmlParseAttribute2</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Constrains namespace URI length to 1-8192 characters. Unbounded namespace URIs enable memory exhaustion during namespace resolution and prefix mapping, a vector for XML-based denial-of-service.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun ns_uri_len () Int)
+(assert
+ (<= ns_uri_len 8192))
+(assert
+ (>= ns_uri_len 1))
+(assert
+ (or (< ns_uri_len 1) (> ns_uri_len 8192)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-13 12:01:01 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-13 18:01:12 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

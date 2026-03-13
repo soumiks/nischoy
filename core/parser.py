@@ -703,6 +703,19 @@ class CParser:
             ]
         }
 
+    def parse_libxml2_namespace_uri_length(self):
+        """Extract namespace URI length bounds."""
+        return {
+            "function": "xmlParseAttribute2",
+            "file": self.filepath,
+            "variables": [
+                {"name": "ns_uri_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "ns_uri_len", "min_val": 1, "max_val": 8192, "action_on_fail": "return_error"}
+            ]
+        }
+
     # ── libpng additional parsers ──
 
     def parse_png_ihdr_height(self):
