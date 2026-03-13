@@ -384,6 +384,10 @@ def get_zlib_checks(parser):
          parser.parse_compress_bound(),
          SecurityConstraints.compress_bound_no_overflow,
          "Verifies that compressBound's output is always >= sourceLen, detecting integer wrap-around. If the bound wraps below sourceLen, the caller allocates an undersized destination buffer, causing a heap buffer overflow during deflate."),
+        ("Deflate Dictionary Length Fits uint16",
+         parser.parse_deflate_dict_length(),
+         SecurityConstraints.deflate_dict_length_uint16_fit,
+         "Proves deflateSetDictionary never accepts a dictionary length that exceeds 16-bit copy-counter capacity (65535). This guards downstream copy loops that may use narrowed counters from integer truncation bugs."),
     ]
 
 def get_libsodium_checks(parser):

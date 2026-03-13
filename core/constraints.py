@@ -134,6 +134,14 @@ class SecurityConstraints:
         return z3.And(src >= 0, src <= 2**64 - 1, bound < src)
 
     @staticmethod
+    def deflate_dict_length_uint16_fit(vars_dict):
+        """deflateSetDictionary dictLength must fit in uint16-sized copy counters."""
+        dl = vars_dict.get('dictLength')
+        if dl is None:
+            return None
+        return z3.Or(dl < 0, dl > 65535)
+
+    @staticmethod
     def kdf_blake2b_subkey_len_bounds(vars_dict):
         """Subkey length must be between 16 and 64."""
         subkey_len = vars_dict.get('subkey_len')

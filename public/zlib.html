@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">7</div>
+        <div class="num">8</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">7</div>
+        <div class="num" style="color: var(--green)">8</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -104,7 +104,7 @@
         <h3>Adler32 Length Bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>adler32_combine_</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>adler32_combine_</code> · Z3 solved in 0.1ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures that the length parameter used in Adler-32 checksum calculations cannot exceed safe buffer boundaries, preventing integer overflow during chunk processing.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -238,7 +238,7 @@
         <h3>CompressBound No Overflow</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>compressBound_z</code> · Z3 solved in 0.2ms</p>
+      <p class="result-meta">Function: <code>compressBound_z</code> · Z3 solved in 0.3ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that compressBound's output is always >= sourceLen, detecting integer wrap-around. If the bound wraps below sourceLen, the caller allocates an undersized destination buffer, causing a heap buffer overflow during deflate.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -246,17 +246,40 @@
 (set-info :status unknown)
 (declare-fun sourceLen () Int)
 (assert
- (let ((?x150 (div sourceLen 33554432)))
-(let ((?x5 (+ (+ (+ sourceLen (div sourceLen 4096)) (div sourceLen 16384)) ?x150)))
-(let (($x16 (<= sourceLen 18446744073709551615)))
-(let (($x204 (>= sourceLen 0)))
-(and $x204 $x16 (< (+ ?x5 13) sourceLen)))))))
+ (let ((?x22 (div sourceLen 33554432)))
+(let ((?x24 (+ (+ (+ sourceLen (div sourceLen 4096)) (div sourceLen 16384)) ?x22)))
+(let (($x19 (<= sourceLen 18446744073709551615)))
+(let (($x33 (>= sourceLen 0)))
+(and $x33 $x19 (< (+ ?x24 13) sourceLen)))))))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Deflate Dictionary Length Fits uint16</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>deflateSetDictionary</code> · Z3 solved in 0.1ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves deflateSetDictionary never accepts a dictionary length that exceeds 16-bit copy-counter capacity (65535). This guards downstream copy loops that may use narrowed counters from integer truncation bugs.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun dictLength () Int)
+(assert
+ (<= dictLength 32768))
+(assert
+ (>= dictLength 0))
+(assert
+ (or (< dictLength 0) (> dictLength 65535)))
 (check-sat)
 </code></pre>
       </details>
     </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 05:46:08 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-13 02:03:22 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>
