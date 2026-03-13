@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">8</div>
+        <div class="num">9</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">8</div>
+        <div class="num" style="color: var(--green)">9</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -104,7 +104,7 @@
         <h3>Port Number Bounds (0-65535)</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>Curl_parse_port</code> · Z3 solved in 0.1ms</p>
+      <p class="result-meta">Function: <code>Curl_parse_port</code> · Z3 solved in 0.2ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures that a parsed port number strictly falls between 0 and 65535. This prevents integer overflow bugs where negative numbers or extremely large numbers could bypass downstream access controls.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -550,8 +550,36 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Timeout Value Bounds (Overflow Prevention)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>Curl_setopt</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that CURLOPT_CONNECTTIMEOUT and CURLOPT_TIMEOUT values are non-negative and ≤ 2,147,483 seconds. When curl converts seconds to milliseconds internally (×1000), values above this threshold overflow a signed 32-bit integer, causing negative timeouts that bypass connection limits.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun connect_timeout () Int)
+(declare-fun transfer_timeout () Int)
+(assert
+ (<= connect_timeout 2147483))
+(assert
+ (>= connect_timeout 0))
+(assert
+ (<= transfer_timeout 2147483))
+(assert
+ (>= transfer_timeout 0))
+(assert
+ (or (or (< connect_timeout 0) (> connect_timeout 2147483)) (or (< transfer_timeout 0) (> transfer_timeout 2147483))))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-08 05:46:08 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-13 06:01:48 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

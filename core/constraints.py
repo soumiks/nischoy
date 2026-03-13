@@ -342,6 +342,19 @@ class SecurityConstraints:
         return z3.Or(*violations)
 
     @staticmethod
+    def timeout_value_bounds(vars_dict):
+        """Connection/transfer timeouts must be non-negative and within long range to prevent overflow in ms conversion."""
+        violations = []
+        for field in ['connect_timeout', 'transfer_timeout']:
+            v = vars_dict.get(field)
+            if v is not None:
+                # Must be >= 0 and <= 2^31-1 (fits signed 32-bit after sec→ms multiply)
+                violations.append(z3.Or(v < 0, v > 2147483))
+        if not violations:
+            return None
+        return z3.Or(*violations)
+
+    @staticmethod
     def git_protocol_version_bounds(vars_dict):
         """Git protocol version must be 0, 1, or 2."""
         version = vars_dict.get('version')

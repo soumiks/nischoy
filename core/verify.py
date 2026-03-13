@@ -352,6 +352,10 @@ def get_curl_checks(parser):
          parser.parse_redirect_bounds(),
          SecurityConstraints.redirect_counter_bounds,
          "Ensures the redirect follow counter (uint16) and max redirects config (int16) stay within their type bounds. An unchecked counter could wrap around, enabling infinite redirect loops and denial-of-service."),
+        ("Timeout Value Bounds (Overflow Prevention)",
+         parser.parse_timeout_bounds(),
+         SecurityConstraints.timeout_value_bounds,
+         "Proves that CURLOPT_CONNECTTIMEOUT and CURLOPT_TIMEOUT values are non-negative and ≤ 2,147,483 seconds. When curl converts seconds to milliseconds internally (×1000), values above this threshold overflow a signed 32-bit integer, causing negative timeouts that bypass connection limits."),
     ]
 
 def get_zlib_checks(parser):

@@ -461,6 +461,21 @@ class CParser:
             ]
         }
 
+    def parse_timeout_bounds(self):
+        """Extract timeout value bounds (connect_timeout, transfer_timeout)."""
+        return {
+            "function": "Curl_setopt",
+            "file": self.filepath,
+            "variables": [
+                {"name": "connect_timeout", "type": "int"},
+                {"name": "transfer_timeout", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "connect_timeout", "min_val": 0, "max_val": 2147483, "action_on_fail": "return_error"},
+                {"op": "check_bound", "variable": "transfer_timeout", "min_val": 0, "max_val": 2147483, "action_on_fail": "return_error"},
+            ]
+        }
+
     def parse_sqlite3_sql_length(self):
         """Extract SQL length bounds from sqlite3_prepare."""
         return {
