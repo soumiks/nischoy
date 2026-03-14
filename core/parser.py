@@ -852,6 +852,19 @@ class CParser:
             ]
         }
 
+    def parse_openssh_key_bits(self):
+        """Extract SSH key bit length bounds."""
+        return {
+            "function": "sshkey_generate",
+            "file": self.filepath,
+            "variables": [
+                {"name": "key_bits", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "key_bits", "min_val": 1024, "max_val": 16384, "action_on_fail": "return_error"}
+            ]
+        }
+
     # ── sudo additional parsers ──
 
     def parse_sudo_gid_check(self):

@@ -558,6 +558,14 @@ class SecurityConstraints:
             return None
         return z3.Or(pl < 5, pl > 262144)
 
+    @staticmethod
+    def openssh_key_bits_bounds(vars_dict):
+        """SSH key bit length must be 1024-16384."""
+        key_bits = vars_dict.get('key_bits')
+        if key_bits is None:
+            return None
+        return z3.Or(key_bits < 1024, key_bits > 16384)
+
     # ── sudo additional constraints ──
 
     @staticmethod

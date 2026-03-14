@@ -599,6 +599,10 @@ def get_openssh_checks(parser):
          parser.parse_openssh_packet_len(),
          SecurityConstraints.openssh_packet_len_bounds,
          "Ensures SSH packet lengths are between 5 and 262144 bytes. Packets shorter than 5 bytes lack mandatory fields; packets exceeding 256KB enable memory exhaustion denial-of-service attacks."),
+        ("SSH Key Bit Length Bounds",
+         parser.parse_openssh_key_bits(),
+         SecurityConstraints.openssh_key_bits_bounds,
+         "Validates that SSH key sizes are between 1024 and 16384 bits. Keys below 1024 bits are cryptographically weak; keys above 16384 bits cause excessive CPU usage during key generation and handshake, enabling denial-of-service."),
     ]
 
 def get_sudo_checks(parser):

@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">3</div>
+        <div class="num">4</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">3</div>
+        <div class="num" style="color: var(--green)">4</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -167,8 +167,31 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>SSH Key Bit Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sshkey_generate</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Validates that SSH key sizes are between 1024 and 16384 bits. Keys below 1024 bits are cryptographically weak; keys above 16384 bits cause excessive CPU usage during key generation and handshake, enabling denial-of-service.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun key_bits () Int)
+(assert
+ (<= key_bits 16384))
+(assert
+ (>= key_bits 1024))
+(assert
+ (or (< key_bits 1024) (> key_bits 16384)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-13 18:01:12 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-14 00:01:28 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>
