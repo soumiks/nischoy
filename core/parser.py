@@ -567,6 +567,19 @@ class CParser:
             ]
         }
 
+    def parse_sqlite3_trigger_depth(self):
+        """Extract trigger recursion depth bounds (SQLITE_MAX_TRIGGER_DEPTH)."""
+        return {
+            "function": "sqlite3CodeRowTriggerDirect",
+            "file": self.filepath,
+            "variables": [
+                {"name": "trigger_depth", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "trigger_depth", "min_val": 0, "max_val": 1000, "action_on_fail": "return_error"}
+            ]
+        }
+
     def parse_git_protocol_version(self):
         """Extract protocol version bounds from git."""
         return {

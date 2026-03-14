@@ -475,6 +475,10 @@ def get_sqlite_checks(parser):
          parser.parse_sqlite3_variable_number(),
          SecurityConstraints.sqlite3_variable_number_bounds,
          "Verifies that SQL parameter indices (?NNN syntax) are between 1 and SQLITE_MAX_VARIABLE_NUMBER (32766). An out-of-bounds parameter index overflows the apArg[] array on the VDBE stack, enabling heap corruption via crafted SQL."),
+        ("SQLite3 Trigger Recursion Depth Bounds (SQLITE_MAX_TRIGGER_DEPTH)",
+         parser.parse_sqlite3_trigger_depth(),
+         SecurityConstraints.sqlite3_trigger_depth_bounds,
+         "Proves that trigger recursion depth cannot exceed SQLITE_MAX_TRIGGER_DEPTH (1000). Without this bound, a recursive trigger chain causes C stack overflow, enabling denial-of-service or potential code execution via crafted trigger definitions."),
     ]
 
 def get_openssl_checks(parser):

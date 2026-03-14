@@ -280,6 +280,14 @@ class SecurityConstraints:
         return z3.Or(var_num < 1, var_num > 32766)
 
     @staticmethod
+    def sqlite3_trigger_depth_bounds(vars_dict):
+        """Trigger recursion depth must be between 0 and SQLITE_MAX_TRIGGER_DEPTH (1000)."""
+        depth = vars_dict.get('trigger_depth')
+        if depth is None:
+            return None
+        return z3.Or(depth < 0, depth > 1000)
+
+    @staticmethod
     def dsa_sig_len_bounds(vars_dict):
         """Length must be non-negative."""
         length = vars_dict.get('len')
