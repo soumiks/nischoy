@@ -80,11 +80,11 @@
 
     <div class="summary">
       <div class="summary-card red">
-        <div class="num" style="color: var(--red)">1 FAILED</div>
+        <div class="num" style="color: var(--red)">2 FAILED</div>
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">11</div>
+        <div class="num">12</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
@@ -92,7 +92,7 @@
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--red)">1</div>
+        <div class="num" style="color: var(--red)">2</div>
         <div class="label">Failed</div>
       </div>
     </div>
@@ -104,7 +104,7 @@
         <h3>Protocol Version Bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>discover_version</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>discover_version</code> · Z3 solved in 1.6ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Validates that the parsed Git network protocol version is bounded between version 0 and version 2, ensuring state machine stability and preventing parser confusion on the wire protocol.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -150,7 +150,7 @@
         <h3>Hash Raw Size Allowed Set (SHA-1/SHA-256)</h3>
         <span class="badge red">FAILED</span>
       </div>
-      <p class="result-meta">Function: <code>hash_object_file</code> · Z3 solved in 0.1ms</p>
+      <p class="result-meta">Function: <code>hash_object_file</code> · Z3 solved in 5.6ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Restricts hash_rawsz to the exact digest sizes used by Git's supported object formats: 20 bytes (SHA-1) or 32 bytes (SHA-256). Intermediate widths can cause subtle buffer sizing mismatches in hash copy/compare and object-ID formatting paths.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -232,6 +232,35 @@
  (>= obj_type 1))
 (assert
  (or (< obj_type 1) (> obj_type 7)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card red">
+      <div class="result-header">
+        <span class="status-dot red"></span>
+        <h3>Object Type Allowed Set (Exclude Reserved 5)</h3>
+        <span class="badge red">FAILED</span>
+      </div>
+      <p class="result-meta">Function: <code>parse_object_header</code> · Z3 solved in 0.6ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Restricts object types to the exact Git on-disk type IDs {1,2,3,4,6,7}; value 5 is reserved and must not be accepted. Allowing reserved IDs can desynchronize object dispatch and trigger undefined parsing paths.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun obj_type () Int)
+(assert
+ (<= obj_type 7))
+(assert
+ (>= obj_type 1))
+(assert
+ (let (($x39 (= obj_type 7)))
+(let (($x38 (= obj_type 6)))
+(let (($x33 (= obj_type 4)))
+(let (($x34 (= obj_type 3)))
+(let (($x9 (= obj_type 2)))
+(let (($x12 (= obj_type 1)))
+(not (or $x12 $x9 $x34 $x33 $x38 $x39)))))))))
 (check-sat)
 </code></pre>
       </details>
@@ -352,7 +381,7 @@
       </details>
     </div>
 
-    <p class="timestamp">Last verified: 2026-03-14 06:01:12 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-14 10:01:25 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

@@ -643,6 +643,14 @@ class SecurityConstraints:
         return z3.Or(ot < 1, ot > 7)
 
     @staticmethod
+    def git_object_type_allowed_set(vars_dict):
+        """Object type must be one of Git's defined on-disk types: 1,2,3,4,6,7 (5 is reserved/invalid)."""
+        ot = vars_dict.get('obj_type')
+        if ot is None:
+            return None
+        return z3.Not(z3.Or(ot == 1, ot == 2, ot == 3, ot == 4, ot == 6, ot == 7))
+
+    @staticmethod
     def git_symref_depth_bounds(vars_dict):
         """Symbolic ref depth must be 0-5 (SYMREF_MAXDEPTH)."""
         sd = vars_dict.get('symref_depth')
