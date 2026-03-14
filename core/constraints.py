@@ -371,6 +371,14 @@ class SecurityConstraints:
         return z3.Or(*violations)
 
     @staticmethod
+    def dns_name_length_bounds(vars_dict):
+        """DNS hostname length must be 1-253 chars per RFC 1035 to prevent buffer overflow in resolver."""
+        hostname_len = vars_dict.get('hostname_len')
+        if hostname_len is None:
+            return None
+        return z3.Or(hostname_len < 1, hostname_len > 253)
+
+    @staticmethod
     def git_protocol_version_bounds(vars_dict):
         """Git protocol version must be 0, 1, or 2."""
         version = vars_dict.get('version')

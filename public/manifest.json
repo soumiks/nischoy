@@ -4,8 +4,8 @@
     "name": "curl",
     "version": "master",
     "language": "C",
-    "checks": 9,
-    "passed": 9,
+    "checks": 10,
+    "passed": 10,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -114,9 +114,9 @@
     "name": "git",
     "version": "master",
     "language": "C",
-    "checks": 11,
+    "checks": 12,
     "passed": 10,
-    "failed": 1,
+    "failed": 2,
     "status": "FAILED"
   }
 ]

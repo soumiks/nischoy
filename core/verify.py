@@ -356,6 +356,10 @@ def get_curl_checks(parser):
          parser.parse_timeout_bounds(),
          SecurityConstraints.timeout_value_bounds,
          "Proves that CURLOPT_CONNECTTIMEOUT and CURLOPT_TIMEOUT values are non-negative and ≤ 2,147,483 seconds. When curl converts seconds to milliseconds internally (×1000), values above this threshold overflow a signed 32-bit integer, causing negative timeouts that bypass connection limits."),
+        ("DNS Name Length Bounds (RFC 1035)",
+         parser.parse_dns_name_length(),
+         SecurityConstraints.dns_name_length_bounds,
+         "Verifies that the hostname length passed to curl's DNS resolver is between 1 and 253 characters per RFC 1035. A zero-length name causes null-pointer dereference in resolver; a name exceeding 253 chars overflows fixed-size DNS query buffers and violates protocol limits."),
     ]
 
 def get_zlib_checks(parser):

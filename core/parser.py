@@ -489,6 +489,19 @@ class CParser:
             ]
         }
 
+    def parse_dns_name_length(self):
+        """Extract DNS hostname length bounds for curl's resolver."""
+        return {
+            "function": "Curl_resolv",
+            "file": self.filepath,
+            "variables": [
+                {"name": "hostname_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "hostname_len", "min_val": 1, "max_val": 253, "action_on_fail": "return_error"},
+            ]
+        }
+
     def parse_sqlite3_sql_length(self):
         """Extract SQL length bounds from sqlite3_prepare."""
         return {

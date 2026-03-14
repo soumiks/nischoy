@@ -125,7 +125,7 @@
         <h3>CRC32 Combine Length Bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>crc32_combine_gen64</code> · Z3 solved in 0.1ms</p>
+      <p class="result-meta">Function: <code>crc32_combine_gen64</code> · Z3 solved in 0.0ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that the length parameter in crc32_combine_gen64 is non-negative. A negative length would cause incorrect GF(2) polynomial arithmetic, producing corrupted checksums that bypass data integrity validation.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -238,7 +238,7 @@
         <h3>CompressBound No Overflow</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>compressBound_z</code> · Z3 solved in 0.2ms</p>
+      <p class="result-meta">Function: <code>compressBound_z</code> · Z3 solved in 0.3ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that compressBound's output is always >= sourceLen, detecting integer wrap-around. If the bound wraps below sourceLen, the caller allocates an undersized destination buffer, causing a heap buffer overflow during deflate.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -246,11 +246,11 @@
 (set-info :status unknown)
 (declare-fun sourceLen () Int)
 (assert
- (let ((?x192 (div sourceLen 33554432)))
-(let ((?x214 (+ (+ (+ sourceLen (div sourceLen 4096)) (div sourceLen 16384)) ?x192)))
-(let (($x135 (<= sourceLen 18446744073709551615)))
-(let (($x38 (>= sourceLen 0)))
-(and $x38 $x135 (< (+ ?x214 13) sourceLen)))))))
+ (let ((?x228 (div sourceLen 33554432)))
+(let ((?x106 (+ (+ (+ sourceLen (div sourceLen 4096)) (div sourceLen 16384)) ?x228)))
+(let (($x107 (<= sourceLen 18446744073709551615)))
+(let (($x191 (>= sourceLen 0)))
+(and $x191 $x107 (< (+ ?x106 13) sourceLen)))))))
 (check-sat)
 </code></pre>
       </details>
@@ -279,7 +279,7 @@
       </details>
     </div>
 
-    <p class="timestamp">Last verified: 2026-03-14 06:01:12 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-14 12:01:12 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

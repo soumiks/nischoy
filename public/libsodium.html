@@ -127,7 +127,7 @@
         <h3>KDF Blake2b Subkey ID uint64 Domain</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>crypto_kdf_blake2b_derive_from_key</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>crypto_kdf_blake2b_derive_from_key</code> · Z3 solved in 0.1ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves subkey_id remains inside the unsigned 64-bit domain before it is serialized into the BLAKE2b salt. This blocks negative/sign-extended IDs and oversized values that could cause cross-context key collisions.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -233,7 +233,7 @@
       </details>
     </div>
 
-    <p class="timestamp">Last verified: 2026-03-14 06:01:12 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-14 12:01:12 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

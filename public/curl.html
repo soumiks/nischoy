@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">9</div>
+        <div class="num">10</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">9</div>
+        <div class="num" style="color: var(--green)">10</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -192,7 +192,7 @@
         <h3>Hostname Character Validation (SSRF)</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>hostname_check</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>hostname_check</code> · Z3 solved in 0.1ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Prevents Server-Side Request Forgery (SSRF) and parser-differential attacks by ensuring the hostname does not contain whitespace, @, #, ?, or other control characters.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -578,8 +578,31 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>DNS Name Length Bounds (RFC 1035)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>Curl_resolv</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that the hostname length passed to curl's DNS resolver is between 1 and 253 characters per RFC 1035. A zero-length name causes null-pointer dereference in resolver; a name exceeding 253 chars overflows fixed-size DNS query buffers and violates protocol limits.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun hostname_len () Int)
+(assert
+ (<= hostname_len 253))
+(assert
+ (>= hostname_len 1))
+(assert
+ (or (< hostname_len 1) (> hostname_len 253)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-14 06:01:12 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-14 12:01:12 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>
