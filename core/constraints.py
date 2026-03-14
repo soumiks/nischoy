@@ -192,6 +192,14 @@ class SecurityConstraints:
         return clen < 16
 
     @staticmethod
+    def crypto_box_plaintext_len_nonnegative(vars_dict):
+        """After stripping MACBYTES, plaintext length must not underflow."""
+        clen = vars_dict.get('clen')
+        if clen is None:
+            return None
+        return (clen - 16) < 0
+
+    @staticmethod
     def sqlite3_limit_bounds(vars_dict):
         """limitId must be non-negative and within N_LIMIT."""
         limitId = vars_dict.get('limitId')

@@ -427,6 +427,10 @@ def get_libsodium_checks(parser):
          box_parser.parse_crypto_box_open_clen(),
          SecurityConstraints.crypto_box_ciphertext_len_bounds,
          "Validates that every ciphertext given to crypto_box_open_easy carries at least a 16-byte Poly1305 authenticator, preventing integer underflow when stripping the MAC before decryption."),
+        ("Curve25519 Box Plaintext Length Non-Negative",
+         box_parser.parse_crypto_box_open_clen(),
+         SecurityConstraints.crypto_box_plaintext_len_nonnegative,
+         "Proves that (clen - crypto_box_MACBYTES) cannot go negative before decryption, eliminating unsigned underflow when deriving plaintext length from attacker-controlled ciphertext sizes."),
     ]
 
 def get_sqlite_checks(parser):
