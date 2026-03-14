@@ -40,7 +40,7 @@
     }
     .summary-card .num { font-size: 2rem; font-weight: 800; }
     .summary-card .label { font-size: 0.8rem; color: var(--text-muted); }
-    .summary-card.green { border-color: var(--green); }
+    .summary-card.red { border-color: var(--red); }
     .result-card {
       background: var(--bg-card); border: 1px solid var(--border);
       border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem;
@@ -79,12 +79,12 @@
     </p>
 
     <div class="summary">
-      <div class="summary-card green">
-        <div class="num" style="color: var(--green)">ALL VERIFIED</div>
+      <div class="summary-card red">
+        <div class="num" style="color: var(--red)">1 FAILED</div>
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">10</div>
+        <div class="num">11</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
@@ -92,7 +92,7 @@
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--red)">0</div>
+        <div class="num" style="color: var(--red)">1</div>
         <div class="label">Failed</div>
       </div>
     </div>
@@ -140,6 +140,29 @@
  (>= pkt_len 0))
 (assert
  (or (< pkt_len 0) (> pkt_len 65520)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
+    <div class="result-card red">
+      <div class="result-header">
+        <span class="status-dot red"></span>
+        <h3>Hash Raw Size Allowed Set (SHA-1/SHA-256)</h3>
+        <span class="badge red">FAILED</span>
+      </div>
+      <p class="result-meta">Function: <code>hash_object_file</code> · Z3 solved in 0.1ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Restricts hash_rawsz to the exact digest sizes used by Git's supported object formats: 20 bytes (SHA-1) or 32 bytes (SHA-256). Intermediate widths can cause subtle buffer sizing mismatches in hash copy/compare and object-ID formatting paths.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun hash_rawsz () Int)
+(assert
+ (<= hash_rawsz 32))
+(assert
+ (>= hash_rawsz 20))
+(assert
+ (not (or (= hash_rawsz 20) (= hash_rawsz 32))))
 (check-sat)
 </code></pre>
       </details>
@@ -329,7 +352,7 @@
       </details>
     </div>
 
-    <p class="timestamp">Last verified: 2026-03-14 00:01:28 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-14 06:01:12 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

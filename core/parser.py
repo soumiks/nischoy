@@ -865,6 +865,19 @@ class CParser:
             ]
         }
 
+    def parse_openssh_padding_len(self):
+        """Extract SSH packet padding length bounds (RFC 4253 §6)."""
+        return {
+            "function": "ssh_packet_read_poll2",
+            "file": self.filepath,
+            "variables": [
+                {"name": "padding_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "padding_len", "min_val": 4, "max_val": 255, "action_on_fail": "return_error"}
+            ]
+        }
+
     # ── sudo additional parsers ──
 
     def parse_sudo_gid_check(self):

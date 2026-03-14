@@ -566,6 +566,14 @@ class SecurityConstraints:
             return None
         return z3.Or(key_bits < 1024, key_bits > 16384)
 
+    @staticmethod
+    def openssh_padding_len_bounds(vars_dict):
+        """SSH packet padding must be 4-255 bytes (RFC 4253 §6)."""
+        padding_len = vars_dict.get('padding_len')
+        if padding_len is None:
+            return None
+        return z3.Or(padding_len < 4, padding_len > 255)
+
     # ── sudo additional constraints ──
 
     @staticmethod
@@ -601,6 +609,14 @@ class SecurityConstraints:
         if pl is None:
             return None
         return z3.Or(pl < 0, pl > 65520)
+
+    @staticmethod
+    def git_hash_rawsz_allowed_set(vars_dict):
+        """Hash raw size must be an exact supported digest width (SHA-1 or SHA-256)."""
+        hr = vars_dict.get('hash_rawsz')
+        if hr is None:
+            return None
+        return z3.Not(z3.Or(hr == 20, hr == 32))
 
     @staticmethod
     def git_tree_depth_bounds(vars_dict):

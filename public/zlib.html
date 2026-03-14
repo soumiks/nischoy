@@ -125,7 +125,7 @@
         <h3>CRC32 Combine Length Bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>crc32_combine_gen64</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>crc32_combine_gen64</code> · Z3 solved in 0.1ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that the length parameter in crc32_combine_gen64 is non-negative. A negative length would cause incorrect GF(2) polynomial arithmetic, producing corrupted checksums that bypass data integrity validation.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -238,7 +238,7 @@
         <h3>CompressBound No Overflow</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>compressBound_z</code> · Z3 solved in 0.6ms</p>
+      <p class="result-meta">Function: <code>compressBound_z</code> · Z3 solved in 0.2ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that compressBound's output is always >= sourceLen, detecting integer wrap-around. If the bound wraps below sourceLen, the caller allocates an undersized destination buffer, causing a heap buffer overflow during deflate.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -261,7 +261,7 @@
         <h3>Deflate Dictionary Length Fits uint16</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>deflateSetDictionary</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>deflateSetDictionary</code> · Z3 solved in 0.1ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves deflateSetDictionary never accepts a dictionary length that exceeds 16-bit copy-counter capacity (65535). This guards downstream copy loops that may use narrowed counters from integer truncation bugs.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -279,7 +279,7 @@
       </details>
     </div>
 
-    <p class="timestamp">Last verified: 2026-03-14 00:01:28 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-14 06:01:12 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

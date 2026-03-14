@@ -603,6 +603,10 @@ def get_openssh_checks(parser):
          parser.parse_openssh_key_bits(),
          SecurityConstraints.openssh_key_bits_bounds,
          "Validates that SSH key sizes are between 1024 and 16384 bits. Keys below 1024 bits are cryptographically weak; keys above 16384 bits cause excessive CPU usage during key generation and handshake, enabling denial-of-service."),
+        ("SSH Packet Padding Length Bounds",
+         parser.parse_openssh_padding_len(),
+         SecurityConstraints.openssh_padding_len_bounds,
+         "Proves that SSH packet padding is between 4 and 255 bytes per RFC 4253 §6. Padding below 4 bytes breaks block cipher alignment; padding above 255 overflows the single-byte padding_length field, enabling packet manipulation attacks."),
     ]
 
 def get_sudo_checks(parser):
@@ -635,6 +639,10 @@ def get_git_checks(parser):
          parser.parse_git_pkt_line_len(),
          SecurityConstraints.git_pkt_line_len_bounds,
          "Ensures Git pkt-line lengths are between 0 and 65520 bytes (the protocol maximum). Oversized pkt-lines cause heap buffer overflow in the sideband demultiplexer and smart HTTP transport."),
+        ("Hash Raw Size Allowed Set (SHA-1/SHA-256)",
+         parser.parse_git_hash_rawsz(),
+         SecurityConstraints.git_hash_rawsz_allowed_set,
+         "Restricts hash_rawsz to the exact digest sizes used by Git's supported object formats: 20 bytes (SHA-1) or 32 bytes (SHA-256). Intermediate widths can cause subtle buffer sizing mismatches in hash copy/compare and object-ID formatting paths."),
         ("Tree Traversal Depth Bounds",
          parser.parse_git_tree_depth(),
          SecurityConstraints.git_tree_depth_bounds,
