@@ -527,6 +527,10 @@ def get_nginx_checks(parser):
          parser.parse_ngx_http_version_major(),
          SecurityConstraints.nginx_http_major_version_bounds,
          "Ensures parsed HTTP major versions remain in the range 0-9. Out-of-range values can desynchronize protocol handling assumptions between NGINX and upstream/downstream HTTP components."),
+        ("HTTP Header Name Length Bounds",
+         parser.parse_ngx_http_header_name_length(),
+         SecurityConstraints.nginx_header_name_length_bounds,
+         "Constrains a single HTTP header name length to 1-1024 bytes. Empty names violate RFC parsing assumptions; excessively long names can trigger allocator pressure and parser differential behavior across reverse-proxy chains."),
     ]
 
 def get_libxml2_checks(parser):

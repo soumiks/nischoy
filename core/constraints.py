@@ -470,6 +470,14 @@ class SecurityConstraints:
             return None
         return z3.Or(major < 0, major > 9)
 
+    @staticmethod
+    def nginx_header_name_length_bounds(vars_dict):
+        """Single HTTP header name length must be 1-1024."""
+        hnl = vars_dict.get('header_name_len')
+        if hnl is None:
+            return None
+        return z3.Or(hnl < 1, hnl > 1024)
+
     # ── libxml2 additional constraints ──
 
     @staticmethod

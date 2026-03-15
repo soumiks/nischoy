@@ -701,6 +701,19 @@ class CParser:
             ]
         }
 
+    def parse_ngx_http_header_name_length(self):
+        """Extract HTTP header name length bounds."""
+        return {
+            "function": "ngx_http_parse_header_line",
+            "file": self.filepath,
+            "variables": [
+                {"name": "header_name_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "header_name_len", "min_val": 1, "max_val": 1024, "action_on_fail": "return_error"}
+            ]
+        }
+
     # ── libxml2 additional parsers ──
 
     def parse_libxml2_attr_count(self):

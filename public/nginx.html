@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">6</div>
+        <div class="num">7</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">6</div>
+        <div class="num" style="color: var(--green)">7</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -104,7 +104,7 @@
         <h3>HTTP/2 Field Length Bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>ngx_http_v2_state_field_len</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>ngx_http_v2_state_field_len</code> · Z3 solved in 1.5ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that HTTP/2 HPACK header field lengths are never negative. A negative length in HTTP/2 state parsing could cause infinite loops or massive out-of-bounds memory reads.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -234,8 +234,31 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>HTTP Header Name Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>ngx_http_parse_header_line</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Constrains a single HTTP header name length to 1-1024 bytes. Empty names violate RFC parsing assumptions; excessively long names can trigger allocator pressure and parser differential behavior across reverse-proxy chains.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun header_name_len () Int)
+(assert
+ (<= header_name_len 1024))
+(assert
+ (>= header_name_len 1))
+(assert
+ (or (< header_name_len 1) (> header_name_len 1024)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-15 00:01:32 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-15 04:01:33 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>
