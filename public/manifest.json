@@ -54,8 +54,8 @@
     "name": "nginx",
     "version": "master",
     "language": "C",
-    "checks": 6,
-    "passed": 6,
+    "checks": 7,
+    "passed": 7,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -94,8 +94,8 @@
     "name": "OpenSSH",
     "version": "master",
     "language": "C",
-    "checks": 5,
-    "passed": 5,
+    "checks": 6,
+    "passed": 6,
     "failed": 0,
     "status": "VERIFIED"
   },

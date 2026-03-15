@@ -930,6 +930,19 @@ class CParser:
             ]
         }
 
+    def parse_openssh_kex_proposal_len(self):
+        """Extract KEX proposal string length bounds."""
+        return {
+            "function": "kex_input_kexinit",
+            "file": self.filepath,
+            "variables": [
+                {"name": "kex_proposal_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "kex_proposal_len", "min_val": 1, "max_val": 32768, "action_on_fail": "return_error"}
+            ]
+        }
+
     # ── sudo additional parsers ──
 
     def parse_sudo_gid_check(self):

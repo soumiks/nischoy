@@ -627,6 +627,10 @@ def get_openssh_checks(parser):
          parser.parse_openssh_padding_len(),
          SecurityConstraints.openssh_padding_len_bounds,
          "Proves that SSH packet padding is between 4 and 255 bytes per RFC 4253 §6. Padding below 4 bytes breaks block cipher alignment; padding above 255 overflows the single-byte padding_length field, enabling packet manipulation attacks."),
+        ("KEX Proposal Length Bounds",
+         parser.parse_openssh_kex_proposal_len(),
+         SecurityConstraints.openssh_kex_proposal_len_bounds,
+         "Validates that key exchange proposal strings are between 1 and 32768 bytes. Empty proposals cause null-pointer dereferences; oversized proposals enable memory exhaustion during the SSH handshake, a known denial-of-service vector."),
     ]
 
 def get_sudo_checks(parser):

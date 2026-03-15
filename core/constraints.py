@@ -614,6 +614,14 @@ class SecurityConstraints:
             return None
         return z3.Or(padding_len < 4, padding_len > 255)
 
+    @staticmethod
+    def openssh_kex_proposal_len_bounds(vars_dict):
+        """KEX proposal string length must be 1-32768 bytes to prevent memory exhaustion."""
+        kex_len = vars_dict.get('kex_proposal_len')
+        if kex_len is None:
+            return None
+        return z3.Or(kex_len < 1, kex_len > 32768)
+
     # ── sudo additional constraints ──
 
     @staticmethod
