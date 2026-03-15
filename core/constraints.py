@@ -395,6 +395,14 @@ class SecurityConstraints:
         return z3.Or(hostname_len < 1, hostname_len > 253)
 
     @staticmethod
+    def dns_label_length_bounds(vars_dict):
+        """Each DNS label (between dots) must be 1-63 chars per RFC 1035 §2.3.4."""
+        label_len = vars_dict.get('label_len')
+        if label_len is None:
+            return None
+        return z3.Or(label_len < 1, label_len > 63)
+
+    @staticmethod
     def git_protocol_version_bounds(vars_dict):
         """Git protocol version must be 0, 1, or 2."""
         version = vars_dict.get('version')

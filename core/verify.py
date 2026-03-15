@@ -360,6 +360,10 @@ def get_curl_checks(parser):
          parser.parse_dns_name_length(),
          SecurityConstraints.dns_name_length_bounds,
          "Verifies that the hostname length passed to curl's DNS resolver is between 1 and 253 characters per RFC 1035. A zero-length name causes null-pointer dereference in resolver; a name exceeding 253 chars overflows fixed-size DNS query buffers and violates protocol limits."),
+        ("DNS Label Length Bounds (RFC 1035 §2.3.4)",
+         parser.parse_dns_label_length(),
+         SecurityConstraints.dns_label_length_bounds,
+         "Proves each DNS label (segment between dots) is 1-63 octets per RFC 1035 §2.3.4. A zero-length label causes double-dot parsing ambiguity; a label exceeding 63 octets overflows the single-octet length prefix in DNS wire format, corrupting query packets and enabling cache-poisoning via malformed responses."),
     ]
 
 def get_zlib_checks(parser):

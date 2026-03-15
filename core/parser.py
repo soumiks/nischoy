@@ -502,6 +502,19 @@ class CParser:
             ]
         }
 
+    def parse_dns_label_length(self):
+        """Extract DNS label length bounds (each label between dots ≤ 63 chars per RFC 1035)."""
+        return {
+            "function": "Curl_resolv",
+            "file": self.filepath,
+            "variables": [
+                {"name": "label_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "label_len", "min_val": 1, "max_val": 63, "action_on_fail": "return_error"},
+            ]
+        }
+
     def parse_sqlite3_sql_length(self):
         """Extract SQL length bounds from sqlite3_prepare."""
         return {
