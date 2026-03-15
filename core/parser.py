@@ -634,6 +634,19 @@ class CParser:
             ]
         }
 
+    def parse_openssl_tls_version(self):
+        """Extract TLS protocol version bounds (SSL 3.0 through TLS 1.3)."""
+        return {
+            "function": "ssl_choose_client_version",
+            "file": self.filepath,
+            "variables": [
+                {"name": "tls_version", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "tls_version", "min_val": 0x0300, "max_val": 0x0304, "action_on_fail": "return_error"}
+            ]
+        }
+
     # ── nginx additional parsers ──
 
     def parse_ngx_http_status_code(self):

@@ -499,6 +499,10 @@ def get_openssl_checks(parser):
          parser.parse_openssl_x509_version(),
          SecurityConstraints.openssl_x509_version_bounds,
          "Proves the X.509 certificate version field is 0 (v1), 1 (v2), or 2 (v3). Invalid versions could bypass extension parsing logic and certificate validation checks."),
+        ("TLS Wire Version Bounds",
+         parser.parse_openssl_tls_version(),
+         SecurityConstraints.openssl_tls_version_bounds,
+         "Constrains negotiated TLS wire versions to 0x0300-0x0304 (SSL 3.0 through TLS 1.3). Out-of-range version values can desynchronize version-gating logic and trigger unsupported handshake code paths."),
     ]
 
 def get_nginx_checks(parser):

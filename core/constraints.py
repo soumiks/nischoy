@@ -428,6 +428,14 @@ class SecurityConstraints:
             return None
         return z3.Or(v < 0, v > 2)
 
+    @staticmethod
+    def openssl_tls_version_bounds(vars_dict):
+        """TLS wire version must be between 0x0300 (SSL 3.0) and 0x0304 (TLS 1.3)."""
+        v = vars_dict.get('tls_version')
+        if v is None:
+            return None
+        return z3.Or(v < 0x0300, v > 0x0304)
+
     # ── nginx additional constraints ──
 
     @staticmethod

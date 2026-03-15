@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">4</div>
+        <div class="num">5</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">4</div>
+        <div class="num" style="color: var(--green)">5</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -104,7 +104,7 @@
         <h3>DSA_SIG DER decode length bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>d2i_DSA_SIG</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>d2i_DSA_SIG</code> · Z3 solved in 0.1ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Verifies that the length parameter provided when decoding an ASN.1 DER encoded DSA signature is strictly non-negative. This prevents catastrophic integer underflow vulnerabilities during cryptographic parsing.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -188,8 +188,31 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>TLS Wire Version Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>ssl_choose_client_version</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Constrains negotiated TLS wire versions to 0x0300-0x0304 (SSL 3.0 through TLS 1.3). Out-of-range version values can desynchronize version-gating logic and trigger unsupported handshake code paths.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun tls_version () Int)
+(assert
+ (<= tls_version 772))
+(assert
+ (>= tls_version 768))
+(assert
+ (or (< tls_version 768) (> tls_version 772)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-15 06:14:38 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-15 08:01:24 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>
