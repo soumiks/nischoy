@@ -1032,7 +1032,8 @@ class CParser:
             "file": self.filepath,
             "variables": [{"name": "obj_type", "type": "int"}],
             "operations": [
-                {"op": "check_bound", "variable": "obj_type", "min_val": 1, "max_val": 7, "action_on_fail": "return_error"}
+                {"op": "check_bound", "variable": "obj_type", "min_val": 1, "max_val": 7, "action_on_fail": "return_error"},
+                {"op": "check_set", "variable": "obj_type", "values": [1, 2, 3, 4, 6, 7], "action_on_fail": "return_error"}
             ]
         }
 
@@ -1076,7 +1077,7 @@ class CParser:
             "file": self.filepath,
             "variables": [{"name": "hash_rawsz", "type": "int"}],
             "operations": [
-                {"op": "check_bound", "variable": "hash_rawsz", "min_val": 20, "max_val": 32, "action_on_fail": "return_error"}
+                {"op": "check_set", "variable": "hash_rawsz", "values": [20, 32], "action_on_fail": "return_error"}
             ]
         }
 
@@ -1090,7 +1091,8 @@ class CParser:
                 {"name": "hash_rawsz", "type": "int"},
             ],
             "operations": [
-                {"op": "check_bound", "variable": "hash_algo", "min_val": 1, "max_val": 2, "action_on_fail": "return_error"},
-                {"op": "check_bound", "variable": "hash_rawsz", "min_val": 20, "max_val": 32, "action_on_fail": "return_error"},
+                {"op": "check_coupling", "variable1": "hash_algo", "variable2": "hash_rawsz",
+                 "pairs": [{"var1_val": 1, "var2_val": 20}, {"var1_val": 2, "var2_val": 32}],
+                 "action_on_fail": "return_error"},
             ]
         }

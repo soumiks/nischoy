@@ -115,8 +115,8 @@
     "version": "master",
     "language": "C",
     "checks": 13,
-    "passed": 10,
-    "failed": 3,
-    "status": "FAILED"
+    "passed": 13,
+    "failed": 0,
+    "status": "VERIFIED"
   }
 ]

@@ -40,7 +40,7 @@
     }
     .summary-card .num { font-size: 2rem; font-weight: 800; }
     .summary-card .label { font-size: 0.8rem; color: var(--text-muted); }
-    .summary-card.red { border-color: var(--red); }
+    .summary-card.green { border-color: var(--green); }
     .result-card {
       background: var(--bg-card); border: 1px solid var(--border);
       border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem;
@@ -79,8 +79,8 @@
     </p>
 
     <div class="summary">
-      <div class="summary-card red">
-        <div class="num" style="color: var(--red)">3 FAILED</div>
+      <div class="summary-card green">
+        <div class="num" style="color: var(--green)">ALL VERIFIED</div>
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
@@ -88,11 +88,11 @@
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">10</div>
+        <div class="num" style="color: var(--green)">13</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--red)">3</div>
+        <div class="num" style="color: var(--red)">0</div>
         <div class="label">Failed</div>
       </div>
     </div>
@@ -144,13 +144,13 @@
 </code></pre>
       </details>
     </div>
-    <div class="result-card red">
+    <div class="result-card green">
       <div class="result-header">
-        <span class="status-dot red"></span>
+        <span class="status-dot green"></span>
         <h3>Hash Raw Size Allowed Set (SHA-1/SHA-256)</h3>
-        <span class="badge red">FAILED</span>
+        <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>hash_object_file</code> · Z3 solved in 0.2ms</p>
+      <p class="result-meta">Function: <code>hash_object_file</code> · Z3 solved in 0.0ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Restricts hash_rawsz to the exact digest sizes used by Git's supported object formats: 20 bytes (SHA-1) or 32 bytes (SHA-256). Intermediate widths can cause subtle buffer sizing mismatches in hash copy/compare and object-ID formatting paths.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -158,11 +158,14 @@
 (set-info :status unknown)
 (declare-fun hash_rawsz () Int)
 (assert
- (<= hash_rawsz 32))
+ (let (($x106 (= hash_rawsz 32)))
+ (let (($x116 (= hash_rawsz 20)))
+ (or $x116 $x106))))
 (assert
- (>= hash_rawsz 20))
-(assert
- (not (or (= hash_rawsz 20) (= hash_rawsz 32))))
+ (let (($x106 (= hash_rawsz 32)))
+(let (($x116 (= hash_rawsz 20)))
+(let (($x238 (or $x116 $x106)))
+(not $x238)))))
 (check-sat)
 </code></pre>
       </details>
@@ -231,18 +234,26 @@
 (assert
  (>= obj_type 1))
 (assert
+ (let (($x240 (= obj_type 7)))
+ (let (($x90 (= obj_type 6)))
+ (let (($x92 (= obj_type 4)))
+ (let (($x168 (= obj_type 3)))
+ (let (($x241 (= obj_type 2)))
+ (let (($x116 (= obj_type 1)))
+ (or $x116 $x241 $x168 $x92 $x90 $x240))))))))
+(assert
  (or (< obj_type 1) (> obj_type 7)))
 (check-sat)
 </code></pre>
       </details>
     </div>
-    <div class="result-card red">
+    <div class="result-card green">
       <div class="result-header">
-        <span class="status-dot red"></span>
+        <span class="status-dot green"></span>
         <h3>Object Type Allowed Set (Exclude Reserved 5)</h3>
-        <span class="badge red">FAILED</span>
+        <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>parse_object_header</code> · Z3 solved in 0.2ms</p>
+      <p class="result-meta">Function: <code>parse_object_header</code> · Z3 solved in 0.0ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Restricts object types to the exact Git on-disk type IDs {1,2,3,4,6,7}; value 5 is reserved and must not be accepted. Allowing reserved IDs can desynchronize object dispatch and trigger undefined parsing paths.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -254,13 +265,22 @@
 (assert
  (>= obj_type 1))
 (assert
- (let (($x214 (= obj_type 7)))
-(let (($x90 (= obj_type 6)))
-(let (($x191 (= obj_type 4)))
-(let (($x16 (= obj_type 3)))
-(let (($x228 (= obj_type 2)))
-(let (($x28 (= obj_type 1)))
-(not (or $x28 $x228 $x16 $x191 $x90 $x214)))))))))
+ (let (($x113 (= obj_type 7)))
+ (let (($x228 (= obj_type 6)))
+ (let (($x197 (= obj_type 4)))
+ (let (($x38 (= obj_type 3)))
+ (let (($x155 (= obj_type 2)))
+ (let (($x216 (= obj_type 1)))
+ (or $x216 $x155 $x38 $x197 $x228 $x113))))))))
+(assert
+ (let (($x113 (= obj_type 7)))
+(let (($x228 (= obj_type 6)))
+(let (($x197 (= obj_type 4)))
+(let (($x38 (= obj_type 3)))
+(let (($x155 (= obj_type 2)))
+(let (($x216 (= obj_type 1)))
+(let (($x118 (or $x216 $x155 $x38 $x197 $x228 $x113)))
+(not $x118)))))))))
 (check-sat)
 </code></pre>
       </details>
@@ -311,31 +331,25 @@
 </code></pre>
       </details>
     </div>
-    <div class="result-card red">
+    <div class="result-card green">
       <div class="result-header">
-        <span class="status-dot red"></span>
+        <span class="status-dot green"></span>
         <h3>Hash Algorithm ↔ Raw Size Coupling</h3>
-        <span class="badge red">FAILED</span>
+        <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>repo_set_hash_algo</code> · Z3 solved in 0.1ms</p>
+      <p class="result-meta">Function: <code>repo_set_hash_algo</code> · Z3 solved in 0.3ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Enforces Git hash invariants: SHA-1 (algo=1) must use 20-byte digests and SHA-256 (algo=2) must use 32-byte digests. Mixed pairs can trigger object-ID buffer sizing bugs and hash-vtable misuse.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
         <pre><code>; benchmark generated from python API
 (set-info :status unknown)
-(declare-fun hash_algo () Int)
 (declare-fun hash_rawsz () Int)
+(declare-fun hash_algo () Int)
 (assert
- (<= hash_algo 2))
+ (or (and (= hash_algo 1) (= hash_rawsz 20)) (and (= hash_algo 2) (= hash_rawsz 32))))
 (assert
- (>= hash_algo 1))
-(assert
- (<= hash_rawsz 32))
-(assert
- (>= hash_rawsz 20))
-(assert
- (let (($x70 (or (and (= hash_algo 1) (= hash_rawsz 20)) (and (= hash_algo 2) (= hash_rawsz 32)))))
-(not $x70)))
+ (let (($x16 (or (and (= hash_algo 1) (= hash_rawsz 20)) (and (= hash_algo 2) (= hash_rawsz 32)))))
+(not $x16)))
 (check-sat)
 </code></pre>
       </details>
@@ -369,7 +383,7 @@
         <h3>Hash Raw Size Bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>hash_object_file</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>hash_object_file</code> · Z3 solved in 0.1ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Validates that hash digest raw size is between GIT_SHA1_RAWSZ(20) and GIT_MAX_RAWSZ(32) bytes. Incorrect sizes cause buffer overflows in hash comparison and copy operations throughout the codebase.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -377,9 +391,9 @@
 (set-info :status unknown)
 (declare-fun hash_rawsz () Int)
 (assert
- (<= hash_rawsz 32))
-(assert
- (>= hash_rawsz 20))
+ (let (($x168 (= hash_rawsz 32)))
+ (let (($x241 (= hash_rawsz 20)))
+ (or $x241 $x168))))
 (assert
  (or (< hash_rawsz 20) (> hash_rawsz 32)))
 (check-sat)
@@ -392,7 +406,7 @@
         <h3>Hash Digest Bit-Length Bounds</h3>
         <span class="badge green">VERIFIED</span>
       </div>
-      <p class="result-meta">Function: <code>hash_object_file</code> · Z3 solved in 0.0ms</p>
+      <p class="result-meta">Function: <code>hash_object_file</code> · Z3 solved in 0.1ms</p>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Ensures computed digest width remains within 160-256 bits (20-32 bytes). This protects callers that allocate fixed digest-sized buffers from over/under-sized hash values during copy and comparison operations.</p>
       <details>
         <summary>View SMT2 Constraints</summary>
@@ -400,9 +414,9 @@
 (set-info :status unknown)
 (declare-fun hash_rawsz () Int)
 (assert
- (<= hash_rawsz 32))
-(assert
- (>= hash_rawsz 20))
+ (let (($x92 (= hash_rawsz 32)))
+ (let (($x256 (= hash_rawsz 20)))
+ (or $x256 $x92))))
 (assert
  (or (< (* hash_rawsz 8) 160) (> (* hash_rawsz 8) 256)))
 (check-sat)
@@ -410,7 +424,7 @@
       </details>
     </div>
 
-    <p class="timestamp">Last verified: 2026-03-15 06:01:12 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-15 06:14:38 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

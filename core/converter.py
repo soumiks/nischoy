@@ -52,6 +52,20 @@ class SMTConverter:
                 for ch in op['chars']:
                     self.solver.add(z3.Not(z3.Contains(var_sym, z3.StringVal(ch))))
 
+            elif op['op'] == 'check_set':
+                var_sym = self.vars[op['variable']]
+                allowed = op['values']
+                self.solver.add(z3.Or(*[var_sym == v for v in allowed]))
+
+            elif op['op'] == 'check_coupling':
+                pairs = op['pairs']  # list of {"var1_val": x, "var2_val": y}
+                v1 = self.vars[op['variable1']]
+                v2 = self.vars[op['variable2']]
+                self.solver.add(z3.Or(*[
+                    z3.And(v1 == p['var1_val'], v2 == p['var2_val'])
+                    for p in pairs
+                ]))
+
             elif op['op'] == 'junkscan':
                 var_sym = self.vars[op['variable']]
                 max_control = op.get('max_control', 31)
