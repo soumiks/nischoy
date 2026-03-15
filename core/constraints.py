@@ -588,6 +588,14 @@ class SecurityConstraints:
             return None
         return z3.Or(header_len < 5, header_len > 5)
 
+    @staticmethod
+    def mbedtls_handshake_msg_len_bounds(vars_dict):
+        """TLS handshake message length (uint24) must be 0..16777215."""
+        msg_len = vars_dict.get('handshake_msg_len')
+        if msg_len is None:
+            return None
+        return z3.Or(msg_len < 0, msg_len > 16777215)
+
     # ── openssh additional constraints ──
 
     @staticmethod

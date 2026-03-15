@@ -889,6 +889,19 @@ class CParser:
             ]
         }
 
+    def parse_mbedtls_handshake_msg_len(self):
+        """Extract TLS handshake message length bounds (uint24 length field)."""
+        return {
+            "function": "mbedtls_ssl_parse_handshake_header",
+            "file": self.filepath,
+            "variables": [
+                {"name": "handshake_msg_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "handshake_msg_len", "min_val": 0, "max_val": 16777215, "action_on_fail": "return_error"}
+            ]
+        }
+
     # ── openssh additional parsers ──
 
     def parse_openssh_channel_id(self):

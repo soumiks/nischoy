@@ -607,6 +607,10 @@ def get_mbedtls_checks(parser):
          parser.parse_mbedtls_record_header_len(),
          SecurityConstraints.mbedtls_record_header_len_bounds,
          "Proves TLS record parsing assumes the fixed 5-byte header (type + version + length). Any deviation can shift payload offsets, causing parser desynchronization and potential out-of-bounds reads."),
+        ("TLS Handshake Message Length Bounds (uint24)",
+         parser.parse_mbedtls_handshake_msg_len(),
+         SecurityConstraints.mbedtls_handshake_msg_len_bounds,
+         "Ensures the TLS handshake header length field stays within the protocol's uint24 domain (0..16,777,215). Out-of-range values can desynchronize transcript parsing and trigger over-read/over-allocation during handshake message assembly."),
     ]
 
 def get_openssh_checks(parser):
