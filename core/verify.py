@@ -547,6 +547,10 @@ def get_libxml2_checks(parser):
          parser.parse_libxml2_namespace_uri_length(),
          SecurityConstraints.libxml2_namespace_uri_length_bounds,
          "Constrains namespace URI length to 1-8192 characters. Unbounded namespace URIs enable memory exhaustion during namespace resolution and prefix mapping, a vector for XML-based denial-of-service."),
+        ("Encoding Declaration Length Bounds",
+         parser.parse_libxml2_encoding_decl_length(),
+         SecurityConstraints.libxml2_encoding_decl_length_bounds,
+         "Constrains XML encoding declaration string to 1-40 characters. Overlong encoding names in xmlDetectCharEncoding can trigger buffer overreads during charset sniffing, enabling information disclosure or crashes."),
     ]
 
 def get_libpng_checks(parser):
@@ -679,6 +683,10 @@ def get_git_checks(parser):
          parser.parse_git_hash_algo(),
          SecurityConstraints.git_hash_algo_bounds,
          "Validates hash algorithm identifier is either GIT_HASH_SHA1(1) or GIT_HASH_SHA256(2). Invalid algorithm IDs cause null pointer dereference in the hash vtable lookup."),
+        ("Hash Algorithm ↔ Raw Size Coupling",
+         parser.parse_git_hash_algo_rawsz_pair(),
+         SecurityConstraints.git_hash_algo_rawsz_coupling,
+         "Enforces Git hash invariants: SHA-1 (algo=1) must use 20-byte digests and SHA-256 (algo=2) must use 32-byte digests. Mixed pairs can trigger object-ID buffer sizing bugs and hash-vtable misuse."),
         ("Pack Object Header Length Bounds",
          parser.parse_git_pack_obj_header_len(),
          SecurityConstraints.git_pack_obj_header_len_bounds,

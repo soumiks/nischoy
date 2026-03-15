@@ -24,8 +24,8 @@
     "name": "libsodium",
     "version": "master",
     "language": "C",
-    "checks": 6,
-    "passed": 6,
+    "checks": 7,
+    "passed": 7,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -34,8 +34,8 @@
     "name": "sqlite",
     "version": "master",
     "language": "C",
-    "checks": 10,
-    "passed": 10,
+    "checks": 11,
+    "passed": 11,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -64,8 +64,8 @@
     "name": "libxml2",
     "version": "master",
     "language": "C",
-    "checks": 4,
-    "passed": 4,
+    "checks": 5,
+    "passed": 5,
     "failed": 0,
     "status": "VERIFIED"
   },
@@ -114,9 +114,9 @@
     "name": "git",
     "version": "master",
     "language": "C",
-    "checks": 12,
+    "checks": 13,
     "passed": 10,
-    "failed": 2,
+    "failed": 3,
     "status": "FAILED"
   }
 ]

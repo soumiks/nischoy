@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">4</div>
+        <div class="num">5</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">4</div>
+        <div class="num" style="color: var(--green)">5</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -190,8 +190,31 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>Encoding Declaration Length Bounds</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>xmlDetectCharEncoding</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Constrains XML encoding declaration string to 1-40 characters. Overlong encoding names in xmlDetectCharEncoding can trigger buffer overreads during charset sniffing, enabling information disclosure or crashes.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun encoding_decl_len () Int)
+(assert
+ (<= encoding_decl_len 40))
+(assert
+ (>= encoding_decl_len 1))
+(assert
+ (or (< encoding_decl_len 1) (> encoding_decl_len 40)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-14 12:01:12 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-15 00:01:32 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

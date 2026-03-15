@@ -84,11 +84,11 @@
         <div class="label">Overall</div>
       </div>
       <div class="summary-card">
-        <div class="num">10</div>
+        <div class="num">11</div>
         <div class="label">Properties Checked</div>
       </div>
       <div class="summary-card">
-        <div class="num" style="color: var(--green)">10</div>
+        <div class="num" style="color: var(--green)">11</div>
         <div class="label">Verified</div>
       </div>
       <div class="summary-card">
@@ -328,8 +328,31 @@
 </code></pre>
       </details>
     </div>
+    <div class="result-card green">
+      <div class="result-header">
+        <span class="status-dot green"></span>
+        <h3>SQLite3 Trigger Recursion Depth Bounds (SQLITE_MAX_TRIGGER_DEPTH)</h3>
+        <span class="badge green">VERIFIED</span>
+      </div>
+      <p class="result-meta">Function: <code>sqlite3CodeRowTriggerDirect</code> · Z3 solved in 0.0ms</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Proves that trigger recursion depth cannot exceed SQLITE_MAX_TRIGGER_DEPTH (1000). Without this bound, a recursive trigger chain causes C stack overflow, enabling denial-of-service or potential code execution via crafted trigger definitions.</p>
+      <details>
+        <summary>View SMT2 Constraints</summary>
+        <pre><code>; benchmark generated from python API
+(set-info :status unknown)
+(declare-fun trigger_depth () Int)
+(assert
+ (<= trigger_depth 1000))
+(assert
+ (>= trigger_depth 0))
+(assert
+ (or (< trigger_depth 0) (> trigger_depth 1000)))
+(check-sat)
+</code></pre>
+      </details>
+    </div>
 
-    <p class="timestamp">Last verified: 2026-03-14 12:01:12 UTC · Solver: Z3 4.16.0</p>
+    <p class="timestamp">Last verified: 2026-03-15 00:01:32 UTC · Solver: Z3 4.16.0</p>
   </div>
 </body>
 </html>

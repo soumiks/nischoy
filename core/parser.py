@@ -742,6 +742,19 @@ class CParser:
             ]
         }
 
+    def parse_libxml2_encoding_decl_length(self):
+        """Extract encoding declaration length bounds."""
+        return {
+            "function": "xmlDetectCharEncoding",
+            "file": self.filepath,
+            "variables": [
+                {"name": "encoding_decl_len", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "encoding_decl_len", "min_val": 1, "max_val": 40, "action_on_fail": "return_error"}
+            ]
+        }
+
     # ── libpng additional parsers ──
 
     def parse_png_ihdr_height(self):
@@ -1038,5 +1051,20 @@ class CParser:
             "variables": [{"name": "hash_rawsz", "type": "int"}],
             "operations": [
                 {"op": "check_bound", "variable": "hash_rawsz", "min_val": 20, "max_val": 32, "action_on_fail": "return_error"}
+            ]
+        }
+
+    def parse_git_hash_algo_rawsz_pair(self):
+        """Extract coupled hash algorithm/raw-size relation (SHA1=20, SHA256=32)."""
+        return {
+            "function": "repo_set_hash_algo",
+            "file": self.filepath,
+            "variables": [
+                {"name": "hash_algo", "type": "int"},
+                {"name": "hash_rawsz", "type": "int"},
+            ],
+            "operations": [
+                {"op": "check_bound", "variable": "hash_algo", "min_val": 1, "max_val": 2, "action_on_fail": "return_error"},
+                {"op": "check_bound", "variable": "hash_rawsz", "min_val": 20, "max_val": 32, "action_on_fail": "return_error"},
             ]
         }

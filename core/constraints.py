@@ -496,6 +496,14 @@ class SecurityConstraints:
             return None
         return z3.Or(uri_len < 1, uri_len > 8192)
 
+    @staticmethod
+    def libxml2_encoding_decl_length_bounds(vars_dict):
+        """Encoding declaration length must be 1-40 to prevent buffer overread."""
+        enc_len = vars_dict.get('encoding_decl_len')
+        if enc_len is None:
+            return None
+        return z3.Or(enc_len < 1, enc_len > 40)
+
     # ── libpng additional constraints ──
 
     @staticmethod
@@ -689,6 +697,18 @@ class SecurityConstraints:
         if ha is None:
             return None
         return z3.Or(ha < 1, ha > 2)
+
+    @staticmethod
+    def git_hash_algo_rawsz_coupling(vars_dict):
+        """Hash algorithm and digest width must match exactly (SHA1=20, SHA256=32)."""
+        ha = vars_dict.get('hash_algo')
+        hr = vars_dict.get('hash_rawsz')
+        if ha is None or hr is None:
+            return None
+        return z3.Not(z3.Or(
+            z3.And(ha == 1, hr == 20),
+            z3.And(ha == 2, hr == 32),
+        ))
 
     @staticmethod
     def git_pack_obj_header_len_bounds(vars_dict):
